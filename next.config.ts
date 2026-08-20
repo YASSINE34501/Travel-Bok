@@ -9,7 +9,12 @@ const nextConfig: NextConfig = {
   compress: true,
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [{ protocol: "https", hostname: "**.supabase.co" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "**.supabase.co" },
+    ],
+    // Guide covers render at a handful of widths; trimming the default list
+    // keeps the number of generated variants (and the cache) small.
+    deviceSizes: [390, 640, 828, 1080, 1200, 1600],
   },
   experimental: {
     // Keeps the client bundle lean: only the icons actually used are shipped.

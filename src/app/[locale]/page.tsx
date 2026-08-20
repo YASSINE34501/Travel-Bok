@@ -1,0 +1,101 @@
+import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
+
+import type { Locale } from "@/i18n/routing";
+import { AdSlot } from "@/components/ads/AdSlot";
+import { Hero } from "@/components/home/Hero";
+import {
+  ExplorerPreview,
+  FeatureRow,
+  FinalCta,
+  GuidesPreview,
+  HowItWorks,
+  JobsPreview,
+  PopularDestinations,
+  Stats,
+} from "@/components/home/Sections";
+import { getCountries, getGuides, getJobs } from "@/lib/queries";
+import { pageMetadata } from "@/lib/seo";
+import { pageDescription, pageTitle } from "@/lib/seo-content";
+import { keywordsFor } from "@/data/seo";
+
+// 12 hours. Must be a literal: Next statically analyses this export.
+export const revalidate = 43200;
+
+export function generateStaticParams() {
+  return [{ locale: "en" }, { locale: "ar" }];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata({
+    // Search-intent title, deliberately not the on-page H1.
+    title: pageTitle("home", locale),
+    description: pageDescription("home", locale),
+    path: "",
+    locale,
+    keywords: keywordsFor("home", locale),
+  });
+}
+
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const [countries, guides, jobs] = await Promise.all([
+    getCountries(),
+    getGuides(),
+    getJobs(),
+  ]);
+
+  // Morocco → Germany is the site's most representative pairing: a common
+  // origin, a common destination, and a large enough gap to be worth showing.
+  const source =
+    countries.find((c) => c.code === "ma") ?? countries[0];
+  const destination =
+    countries.find((c) => c.code === "de") ?? countries[1];
+
+  return (
+    <>
+      <Hero source={source} destination={destination} locale={locale} />
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <Stats countries={countries.length} guides={guides.length} />
+
+        <FeatureRow />
+
+        <AdSlot slot="1234567890" format="leaderboard" />
+
+        <HowItWorks />
+
+        <ExplorerPreview
+          source={source}
+          destination={destination}
+          locale={locale}
+        />
+
+        <JobsPreview jobs={jobs} countries={countries} locale={locale} />
+
+        <AdSlot slot="2233445566" format="inline" />
+
+        <GuidesPreview guides={guides} countries={countries} locale={locale} />
+
+        <PopularDestinations
+          countries={countries}
+          guides={guides}
+          locale={locale}
+        />
+
+        <FinalCta />
+      </div>
+    </>
+  );
+}

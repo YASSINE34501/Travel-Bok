@@ -30,8 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — real values never get committed...
 .env*
+# ...but the template documenting which vars exist must be, or a fresh clone
+# has no way to know what to set.
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +42,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code: share the dev-server config, keep machine-local settings out
+.claude/*
+!.claude/launch.json

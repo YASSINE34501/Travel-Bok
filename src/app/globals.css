@@ -1,26 +1,200 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * TRAVLBOK design tokens.
+ *
+ * Cool slate ground + indigo primary for a travel-tech feel, with cyan as the
+ * single accent. Names are semantic (brand / ink / line / accent) so a future
+ * palette change is a value swap here, not a rewrite of every component.
+ *
+ * Contrast: every foreground/background pair used for text clears WCAG AA
+ * (4.5:1 body, 3:1 large). See scripts/check-contrast.mjs.
+ */
+@theme {
+  --color-paper: #f7f8fc;
+  --color-surface: #ffffff;
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-line: #e2e8f0;
+  --color-line-strong: #cbd5e1;
+  /* Form control borders are the only marker of a field's boundary, so they
+     must clear 3:1 against both grounds (WCAG 1.4.11). #7f8da3 does; the
+     lighter greys used for decorative dividers do not. */
+  --color-line-input: #7f8da3;
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-900: #1e3a8a;
+
+  /* Amber, not a second blue: the cost bars put source and destination side by
+     side, and two blues at the same weight are unreadable next to each other. */
+  --color-accent-100: #fef3c7;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #92400e;
+
+  --color-positive: #047857;
+  --color-positive-100: #d1fae5;
+  --color-negative: #be123c;
+  --color-negative-100: #ffe4e6;
+
+  --radius-card: 1rem;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-arabic: var(--font-cairo), var(--font-inter), ui-sans-serif, sans-serif;
+
+  /* Layered, low-opacity shadows read as depth rather than as a grey box. */
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-glass: 0 1px 2px rgb(15 23 42 / 0.03),
+    0 12px 32px -16px rgb(15 23 42 / 0.16);
+  --shadow-lift: 0 4px 6px -2px rgb(15 23 42 / 0.05),
+    0 16px 32px -12px rgb(15 23 42 / 0.18);
+  --shadow-brand: 0 1px 2px rgb(37 99 235 / 0.2),
+    0 8px 20px -8px rgb(37 99 235 / 0.45);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-paper);
+    /* Fine slate grid: two 1px lines at 4% opacity on a 32px pitch. Reads as
+       texture at normal viewing distance, disappears entirely when printed. */
+    background-image:
+      linear-gradient(to right, rgb(100 116 139 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(100 116 139 / 0.045) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-attachment: fixed;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    text-wrap: pretty;
+  }
+
+  /* Arabic needs a larger optical size and looser lines to stay legible. */
+  html[dir="rtl"] body {
+    font-family: var(--font-arabic);
+    line-height: 1.85;
+    letter-spacing: 0;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.024em;
+  }
+
+  /* Plus Jakarta's tighter tracking is a Latin optimisation; Arabic headings
+     keep the body face and neutral tracking. */
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3 {
+    font-family: var(--font-arabic);
+  }
+
+  /* Latin tracking tightening actively harms Arabic letterforms. */
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3 {
+    letter-spacing: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-100);
+    color: var(--color-brand-900);
+  }
+
+  /* Tabular figures keep cost tables from jittering as values change. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Scroll reveal. The hidden step is opt-in via a data attribute written by
+     JS, so content without JS (and for crawlers) is visible by default. */
+  [data-reveal="pending"] {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  [data-reveal="shown"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Mirrors decorative glyphs that carry direction (arrows, chevrons). */
+  html[dir="rtl"] .flip-rtl {
+    transform: scaleX(-1);
+  }
+
+  /* Shared hover treatment for anything clickable that sits on a card. */
+  .lift {
+    transition:
+      transform 200ms var(--ease-out-soft),
+      box-shadow 200ms var(--ease-out-soft),
+      border-color 200ms var(--ease-out-soft);
+  }
+
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .lift:active {
+    transform: translateY(0);
+  }
+
+  /* Skip link: visually hidden until it takes focus. */
+  .skip-link {
+    position: absolute;
+    inset-inline-start: 1rem;
+    top: -4rem;
+    z-index: 100;
+    transition: top 160ms var(--ease-out-soft);
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Motion is removed, but hover shadows still signal interactivity. */
+  .lift:hover {
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,0 +1,9 @@
+# Normalise line endings in the repo so a Windows checkout and a macOS/Linux
+# checkout do not produce whole-file diffs against each other.
+* text=auto eol=lf
+
+# Binary assets: never touch these.
+*.jpg binary
+*.png binary
+*.svg text eol=lf
+*.woff2 binary

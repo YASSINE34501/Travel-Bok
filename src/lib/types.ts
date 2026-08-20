@@ -13,6 +13,8 @@ export type CostOfLiving = {
   transport: number;
   internet: number;
   mealOut: number;
+  /** Typical monthly private or statutory health cover for one adult. */
+  healthInsurance: number;
   avgNetSalary: number;
 };
 
@@ -66,6 +68,39 @@ export type VisaRoute = {
   cost: Localized;
 };
 
+/**
+ * The standardised body of a country guide. Structured rather than prose:
+ * people scan these to compare countries, and a schema keeps every guide
+ * answering the same questions in the same order.
+ */
+export type GuideSections = {
+  residency: {
+    /** Time and conditions to reach permanent residence. */
+    permanent: Localized;
+    /** Time and conditions to reach citizenship. */
+    citizenship: Localized;
+    /** Dual nationality, family reunion, right to change employer, etc. */
+    rights: Localized[];
+    /** Working hours, leave, minimum wage, termination protection. */
+    labourLaw: Localized[];
+  };
+  jobMarket: {
+    /** Sectors actively hiring from abroad. */
+    industries: Localized[];
+    /** How foreign qualifications get recognised, and by whom. */
+    equivalency: Localized;
+    /** How pay is structured and what a typical range looks like. */
+    wages: Localized;
+  };
+  life: {
+    housing: Localized;
+    language: Localized;
+    integration: Localized;
+    pros: Localized[];
+    cons: Localized[];
+  };
+};
+
 export type VisaGuide = {
   countryCode: string;
   title: Localized;
@@ -73,6 +108,8 @@ export type VisaGuide = {
   intro: Localized;
   routes: VisaRoute[];
   requirements: Localized[];
+  /** Optional so a guide can ship before its long-form sections are written. */
+  sections?: GuideSections;
   updatedAt: string;
 };
 
