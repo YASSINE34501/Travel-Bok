@@ -70,6 +70,13 @@ export async function generateMetadata({
     description: t("description"),
     applicationName: t("siteName"),
     alternates: alternates("/", locale as Locale),
+    // Renders <meta name="google-site-verification" ...>. The token is public
+    // by design — it only proves control of the property — so it lives in the
+    // source rather than an env var, where a fork or a fresh deploy would
+    // silently lose it and unverify the property.
+    verification: {
+      google: "mLpVTK8LD_27KYcFZAgWFDQqCvNPzaVDC3zVHNeOSz0",
+    },
     robots: { index: true, follow: true },
     formatDetection: { telephone: false },
   };
