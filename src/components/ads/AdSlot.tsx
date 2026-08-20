@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { applyConsent, readConsent } from "./ConsentBanner";
+import { ADSENSE_CLIENT } from "@/lib/adsense";
 import { cn } from "@/lib/utils";
 
 type AdFormat = "leaderboard" | "rectangle" | "inline";
@@ -39,7 +40,7 @@ export function AdSlot({
   className?: string;
 }) {
   const t = useTranslations("Ads");
-  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  const client = ADSENSE_CLIENT;
   const pushed = useRef(false);
 
   useEffect(() => {
