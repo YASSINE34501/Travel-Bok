@@ -52,6 +52,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+
+  // An unprefixed URL like /nope matches this segment with locale="nope".
+  // The page component below guards with hasLocale, but generateMetadata runs
+  // first — and getTranslations on an unknown locale throws, which Next serves
+  // as a 500. A missing page must answer 404, not "the server is broken".
+  if (!hasLocale(routing.locales, locale)) notFound();
+
   const t = await getTranslations({ locale, namespace: "Meta" });
 
   return {

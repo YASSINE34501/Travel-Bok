@@ -7,7 +7,13 @@
  * Run the dev or start server first, then: npm run check:seo
  * Exits non-zero if any check fails, so it can gate a deploy.
  */
-const BASE = "http://localhost:3000";
+// Defaults to the dev server; pass a base URL to audit a deployed site:
+//   node scripts/seo-audit.mjs https://www.travlbok.com
+const BASE = (process.argv[2] ?? "http://localhost:3000").replace(/\/+$/, "");
+
+// Canonicals must point at the host being audited. A deploy that advertises a
+// different hostname than the one serving it cannot be indexed correctly.
+const EXPECTED_ORIGIN = new URL(BASE).origin;
 
 const guides = [
   "de","fr","es","it","nl","be","se","ch","at","pt","pl","ie",
@@ -24,8 +30,31 @@ for (const locale of ["en", "ar"]) {
 const strip = (s) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
 const rows = [];
 
+/**
+ * A local dev server answers 60 requests back to back happily; a deployed one
+ * behind a CDN does not — cold starts and connection limits produce ECONNRESET
+ * partway through. Retry with backoff, and pace remote crawls, so an audit of
+ * production reports on the site rather than on the network.
+ */
+const REMOTE = !BASE.includes("localhost");
+
+async function fetchHtml(url, attempt = 1) {
+  try {
+    const res = await fetch(url, {
+      headers: { "user-agent": "TRAVLBOK-seo-audit" },
+      signal: AbortSignal.timeout(45_000),
+    });
+    return await res.text();
+  } catch (error) {
+    if (attempt >= 3) throw new Error(`${url}: ${error.message}`);
+    await new Promise((r) => setTimeout(r, attempt * 2_000));
+    return fetchHtml(url, attempt + 1);
+  }
+}
+
 for (const path of paths) {
-  const html = await (await fetch(BASE + path)).text();
+  const html = await fetchHtml(BASE + path);
+  if (REMOTE) await new Promise((r) => setTimeout(r, 250));
 
   const title = strip(html.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? "");
   const desc =
@@ -57,7 +86,8 @@ for (const path of paths) {
     descLen: desc.length,
     desc,
     hasKeywords: keywords.length > 0,
-    canonical: canonical.replace("https://travlbok.com", ""),
+    canonical,
+    canonicalHost: canonical ? new URL(canonical).origin : "",
     hreflang: [...new Set(hreflang)].join(","),
     h1Count: h1.length,
     h1: h1[0] ?? "",
@@ -79,8 +109,19 @@ const bad = {
   guidesNoFaq: rows.filter(
     (r) => /\/guides\/[a-z]{2}$/.test(r.path) && !r.schemas.includes("FAQPage"),
   ),
+  // A deploy that advertises a different hostname than the one serving it
+  // cannot be indexed correctly — every canonical, hreflang and sitemap entry
+  // points somewhere else. This check exists because production shipped for a
+  // while with canonicals aimed at the per-deploy *.vercel.app hostname.
+  //
+  // Only meaningful against a deployed host: a dev server is *supposed* to emit
+  // production canonicals, so comparing them to localhost would fail always.
+  wrongCanonicalHost: REMOTE
+    ? rows.filter((r) => r.canonicalHost !== EXPECTED_ORIGIN)
+    : [],
 };
 
+console.log("auditing:", BASE);
 console.log("pages audited:", rows.length);
 for (const [k, v] of Object.entries(bad)) {
   console.log(`\n## ${k}: ${v.length}`);

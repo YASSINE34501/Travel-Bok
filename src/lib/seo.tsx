@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { locales, type Locale } from "@/i18n/routing";
 
-const FALLBACK_SITE_URL = "https://travlbok.com";
+/** The canonical production host. Must match the domain that actually serves. */
+const FALLBACK_SITE_URL = "https://www.travlbok.com";
 
 /**
  * Resolves the canonical origin, defensively.
@@ -20,8 +21,14 @@ const FALLBACK_SITE_URL = "https://travlbok.com";
 function resolveSiteUrl(): string {
   const candidates = [
     process.env.NEXT_PUBLIC_SITE_URL,
-    // Set automatically on Vercel; gives preview deploys real absolute URLs.
-    process.env.VERCEL_URL,
+
+    // VERCEL_URL is the *per-deployment* hostname
+    // (travel-h3u8fo5ml-yassine.vercel.app) and Vercel sets it on production
+    // builds too — not just previews. Using it unconditionally pointed every
+    // canonical, hreflang, og:url and sitemap entry at a hostname that changes
+    // on each deploy, which is why it is now gated to preview builds only.
+    // Production must never fall through to it.
+    process.env.VERCEL_ENV === "preview" ? process.env.VERCEL_URL : undefined,
   ];
 
   for (const raw of candidates) {
