@@ -63,7 +63,7 @@ for (const path of paths) {
     html.match(/<meta name="keywords" content="([^"]*)"/)?.[1] ?? "";
   const canonical =
     html.match(/<link rel="canonical" href="([^"]*)"/)?.[1] ?? "";
-  const hreflang = [...html.matchAll(/hreflang="([^"]*)"/g)].map((m) => m[1]);
+  const hreflang = [...html.matchAll(/hreflang="([^"]*)"/gi)].map((m) => m[1]);
 
   const h1 = [...html.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/g)].map((m) => strip(m[1]));
   const h2 = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/g)].map((m) => strip(m[1]));
@@ -109,6 +109,17 @@ const bad = {
   guidesNoFaq: rows.filter(
     (r) => /\/guides\/[a-z]{2}$/.test(r.path) && !r.schemas.includes("FAQPage"),
   ),
+  // Both locales plus x-default on every page. Note the matcher above is
+  // case-insensitive: Next renders React's camelCase `hrefLang`, and a
+  // case-sensitive pattern silently collected nothing — which would have
+  // hidden a genuinely missing alternate rather than reporting it.
+  missingHreflang: rows.filter(
+    (r) =>
+      !r.hreflang.includes("en") ||
+      !r.hreflang.includes("ar") ||
+      !r.hreflang.includes("x-default"),
+  ),
+
   // A deploy that advertises a different hostname than the one serving it
   // cannot be indexed correctly — every canonical, hreflang and sitemap entry
   // points somewhere else. This check exists because production shipped for a
