@@ -9,6 +9,7 @@ import { routing, localeDirection, type Locale } from "@/i18n/routing";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AdSenseScript } from "@/components/ads/AdSenseScript";
+import { ADSENSE_CLIENT } from "@/lib/adsense";
 import { ConsentBanner } from "@/components/ads/ConsentBanner";
 import {
   JsonLd,
@@ -77,6 +78,11 @@ export async function generateMetadata({
     verification: {
       google: "mLpVTK8LD_27KYcFZAgWFDQqCvNPzaVDC3zVHNeOSz0",
     },
+    // AdSense ownership. Next has no typed field for this one, so it goes
+    // through `other`, which renders <meta name="google-adsense-account">.
+    other: {
+      "google-adsense-account": ADSENSE_CLIENT,
+    },
     robots: { index: true, follow: true },
     formatDetection: { telephone: false },
   };
@@ -105,6 +111,11 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${jakarta.variable} ${cairo.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/* In <head>, server-rendered: AdSense's ownership crawler reads the
+            first HTTP response and does not reliably run client JavaScript. */}
+        <AdSenseScript />
+      </head>
       <body className="flex min-h-screen flex-col">
         <NextIntlClientProvider>
           <a href="#main" className="skip-link rounded-full bg-brand-600 px-4 py-2 text-sm font-medium text-white">
@@ -119,7 +130,6 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
         <JsonLd data={organizationSchema(locale)} />
         <JsonLd data={websiteSchema(locale)} />
-        <AdSenseScript />
       </body>
     </html>
   );
