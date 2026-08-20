@@ -1,8 +1,46 @@
 import type { Metadata } from "next";
 import { locales, type Locale } from "@/i18n/routing";
 
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://travlbok.com";
+const FALLBACK_SITE_URL = "https://travlbok.com";
+
+/**
+ * Resolves the canonical origin, defensively.
+ *
+ * `process.env.X ?? fallback` is not enough: `??` only catches undefined and
+ * null, so a variable that is *defined but blank* — the normal state of an
+ * unfilled field in a Vercel/CI dashboard — passes straight through as `""`,
+ * and `new URL("")` throws ERR_INVALID_URL during the build. A missing protocol
+ * ("travlbok.com") throws for the same reason and is an easy thing to type.
+ *
+ * So: trim, fall back when empty, add a protocol if absent, drop any trailing
+ * slash (every caller appends `/${locale}...`), and validate. If the value is
+ * still unusable we return the production origin rather than failing the build,
+ * because a wrong-but-valid canonical is recoverable and a broken build is not.
+ */
+function resolveSiteUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    // Set automatically on Vercel; gives preview deploys real absolute URLs.
+    process.env.VERCEL_URL,
+  ];
+
+  for (const raw of candidates) {
+    const value = raw?.trim();
+    if (!value) continue;
+
+    const withProtocol = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+
+    try {
+      return new URL(withProtocol).origin;
+    } catch {
+      // Try the next candidate rather than taking down the build.
+    }
+  }
+
+  return FALLBACK_SITE_URL;
+}
+
+export const SITE_URL = resolveSiteUrl();
 
 /**
  * Builds canonical + hreflang alternates for a locale-prefixed path.

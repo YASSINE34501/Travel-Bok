@@ -16,7 +16,7 @@ import {
 } from "@/components/home/Sections";
 import { getCountries, getGuides, getJobs } from "@/lib/queries";
 import { pageMetadata } from "@/lib/seo";
-import { pageDescription, pageTitle } from "@/lib/seo-content";
+import { pageDescription, pageTitle, withBrand } from "@/lib/seo-content";
 import { keywordsFor } from "@/data/seo";
 
 // 12 hours. Must be a literal: Next statically analyses this export.
@@ -33,8 +33,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   return pageMetadata({
-    // Search-intent title, deliberately not the on-page H1.
-    title: pageTitle("home", locale),
+    // Search-intent title, deliberately not the on-page H1. Branded here
+    // because title.template does not reach this segment.
+    title: withBrand(pageTitle("home", locale), locale),
     description: pageDescription("home", locale),
     path: "",
     locale,

@@ -298,6 +298,19 @@ export function pageTitle(key: PageKey, locale: Locale): string {
   return fitTitle(TITLES[key][locale], locale);
 }
 
+/**
+ * Appends the brand explicitly.
+ *
+ * Next applies `title.template` only to *child* segments, never to the segment
+ * that declares it — so `[locale]/page.tsx` sits alongside `[locale]/layout.tsx`
+ * and never receives the "| TRAVLBOK" suffix every other page gets. The home
+ * page is the one most likely to be searched by brand name, so it asks for the
+ * suffix itself. `fitTitle` already reserved the room.
+ */
+export function withBrand(title: string, locale: Locale): string {
+  return `${title} | ${BRAND[locale]}`;
+}
+
 export function pageDescription(key: PageKey, locale: Locale): string {
   const [base, tails] = DESCRIPTIONS[key][locale];
   return fitDescription(base, tails);
