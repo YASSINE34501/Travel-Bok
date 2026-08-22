@@ -68,6 +68,16 @@ export type GuideDocFrontmatter = {
 
   canonical_path?: string;
 
+  /**
+   * Frequently-asked questions, structured rather than prose.
+   *
+   * These live in frontmatter and not in the body so the rendered <details>
+   * block and the FAQPage schema come from one source. Emitting markup that
+   * describes content the crawler cannot see is a structured-data violation,
+   * so the two must never drift apart.
+   */
+  faq?: { q: string; a: string }[];
+
   cover_image?: {
     url: string;
     source?: string;

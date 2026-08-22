@@ -4,6 +4,7 @@ import { LEGAL_DOCUMENTS } from "@/data/legal";
 import { COST_DATA_UPDATED } from "@/data/sources";
 import { locales } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/seo";
+import { listGuideDocSlugs } from "@/lib/guides-md";
 
 type Entry = {
   path: string;
@@ -21,7 +22,11 @@ const now = new Date();
  *
  * /login and /register are deliberately absent: both are marked noindex.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Read at build time: the markdown articles are files in the repo, so the
+  // sitemap cannot go stale relative to what actually renders.
+  const ARTICLE_SLUGS = await listGuideDocSlugs();
+
   const entries: Entry[] = [
     { path: "", priority: 1, changeFrequency: "weekly", lastModified: now },
     {
@@ -47,6 +52,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: doc.slug === "about" ? 0.5 : 0.3,
       changeFrequency: "yearly" as const,
       lastModified: new Date(doc.updatedAt),
+    })),
+
+    ...ARTICLE_SLUGS.map((slug) => ({
+      path: `/articles/${slug}`,
+      // Same weight as a visa guide: these are long-form editorial pages
+      // carrying Article + FAQPage markup, not secondary content.
+      priority: 0.8,
+      changeFrequency: "monthly" as const,
+      lastModified: now,
     })),
 
     { path: "/contact", priority: 0.5, changeFrequency: "yearly", lastModified: now },

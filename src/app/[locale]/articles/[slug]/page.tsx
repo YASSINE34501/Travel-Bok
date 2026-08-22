@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { setRequestLocale } from "next-intl/server";
 
 import { routing, type Locale } from "@/i18n/routing";
@@ -16,6 +17,7 @@ import {
   JsonLd,
   articleSchema,
   breadcrumbSchema,
+  faqSchema,
 } from "@/lib/seo";
 import { AdSlot } from "@/components/ads/AdSlot";
 
@@ -67,6 +69,7 @@ export default async function ArticlePage({
   const { frontmatter, content } = doc;
   const heading = localised(frontmatter, "h1", locale);
   const description = localised(frontmatter, "meta_description", locale);
+  const faq = frontmatter.faq ?? [];
   const cover = frontmatter.cover_image;
   const coverAlt =
     (locale === "ar" ? cover?.alt_ar : cover?.alt_en) ?? heading;
@@ -91,6 +94,11 @@ export default async function ArticlePage({
           locale,
         )}
       />
+      {faq.length > 0 ? (
+        <JsonLd
+          data={faqSchema(faq.map((f) => ({ question: f.q, answer: f.a })))}
+        />
+      ) : null}
 
       {cover?.url ? (
         <div className="relative mb-8 aspect-[21/9] w-full overflow-hidden rounded-xl">
@@ -118,6 +126,33 @@ export default async function ArticlePage({
       {/* The compiled MDX. `.markdown-content` styles live in globals.css; the
           markdown itself carries no classes, keeping the source portable. */}
       <div className="markdown-content">{content}</div>
+
+      {faq.length > 0 ? (
+        <section className="mt-12">
+          <h2 className="text-2xl font-bold text-ink">
+            {locale === "ar" ? "الأسئلة الشائعة" : "Frequently asked questions"}
+          </h2>
+
+          {/* Native <details>: the answers are in the HTML whether or not an
+              item is open, which is what the FAQPage markup above claims. */}
+          <div className="mt-5 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+            {faq.map((item, i) => (
+              <details key={i} className="group">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-start font-medium text-ink transition-colors marker:content-none hover:bg-brand-50/60">
+                  {item.q}
+                  <ChevronDown
+                    aria-hidden
+                    className="size-5 shrink-0 text-ink-muted transition-transform duration-200 group-open:rotate-180"
+                  />
+                </summary>
+                <p className="px-5 pb-5 leading-relaxed text-ink-muted">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {cover?.photographer ? (
         <p className="mt-10 text-xs text-ink-muted">
