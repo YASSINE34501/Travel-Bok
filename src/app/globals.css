@@ -198,3 +198,139 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+@layer components {
+  /* Styling for compiled MDX (src/data/guides/*.md). The markdown source
+     carries no classes at all — that is what keeps it portable and lets the
+     same file be re-rendered elsewhere — so every element is styled here.
+
+     All spacing uses logical properties so one stylesheet serves both LTR and
+     RTL, matching the rule in the README: never write left/right variants. */
+  .markdown-body {
+    color: var(--color-ink);
+    line-height: 1.75;
+  }
+
+  .markdown-body > * + * {
+    margin-block-start: 1.15em;
+  }
+
+  .markdown-body h1,
+  .markdown-body h2,
+  .markdown-body h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+    scroll-margin-block-start: 5rem;
+  }
+
+  .markdown-body h1 {
+    font-size: 1.875rem;
+    margin-block-start: 2rem;
+  }
+
+  .markdown-body h2 {
+    font-size: 1.5rem;
+    margin-block-start: 2.5rem;
+    padding-block-end: 0.4rem;
+    border-block-end: 1px solid var(--color-line);
+  }
+
+  .markdown-body h3 {
+    font-size: 1.2rem;
+    margin-block-start: 1.75rem;
+  }
+
+  .markdown-body a {
+    color: var(--color-brand-700);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .markdown-body strong {
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  .markdown-body ul,
+  .markdown-body ol {
+    padding-inline-start: 1.5rem;
+  }
+
+  .markdown-body ul {
+    list-style: disc;
+  }
+
+  .markdown-body ol {
+    list-style: decimal;
+  }
+
+  .markdown-body li + li {
+    margin-block-start: 0.5rem;
+  }
+
+  .markdown-body blockquote {
+    padding: 0.85rem 1.1rem;
+    border-inline-start: 3px solid var(--color-accent-500);
+    background-color: var(--color-accent-100);
+    border-radius: 0.5rem;
+  }
+
+  .markdown-body blockquote > * + * {
+    margin-block-start: 0.75rem;
+  }
+
+  /* Wide requirement tables must scroll inside their own box; the page body
+     must never scroll horizontally. */
+  .markdown-body .table-scroll {
+    overflow-x: auto;
+    margin-block: 1.5rem;
+  }
+
+  .markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.925rem;
+    /* Tabular figures keep the euro thresholds from jittering column to
+       column, same reason as .tnum on the cost tables. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .markdown-body th,
+  .markdown-body td {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--color-line);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .markdown-body thead th {
+    background-color: var(--color-paper);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .markdown-body hr {
+    border: 0;
+    border-block-start: 1px solid var(--color-line);
+    margin-block: 2rem;
+  }
+
+  .markdown-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+  }
+
+  .markdown-body code {
+    padding: 0.15em 0.4em;
+    border-radius: 0.3rem;
+    background-color: var(--color-brand-50);
+    font-size: 0.9em;
+  }
+
+  .markdown-body small {
+    color: var(--color-ink-muted);
+    font-size: 0.8rem;
+  }
+}
