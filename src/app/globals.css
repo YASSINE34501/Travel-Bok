@@ -202,134 +202,147 @@
 @layer components {
   /* Styling for compiled MDX (src/data/guides/*.md). The markdown source
      carries no classes at all — that is what keeps it portable and lets the
-     same file be re-rendered elsewhere — so every element is styled here.
+     same file render on GitHub — so every element is styled here.
 
-     All spacing uses logical properties so one stylesheet serves both LTR and
-     RTL, matching the rule in the README: never write left/right variants. */
-  .markdown-body {
+     Spacing uses logical properties throughout so one stylesheet serves both
+     LTR and RTL, per the rule in the README: never write left/right variants. */
+  .markdown-content {
     color: var(--color-ink);
-    line-height: 1.75;
+    font-size: 1.125rem;
+    line-height: 1.8;
   }
 
-  .markdown-body > * + * {
-    margin-block-start: 1.15em;
-  }
-
-  .markdown-body h1,
-  .markdown-body h2,
-  .markdown-body h3 {
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4 {
     font-family: var(--font-display);
     font-weight: 700;
+    margin-block-start: 2rem;
+    margin-block-end: 1rem;
     color: var(--color-ink);
+    /* Clears the sticky navbar when a table-of-contents anchor is followed. */
     scroll-margin-block-start: 5rem;
   }
 
-  .markdown-body h1 {
-    font-size: 1.875rem;
-    margin-block-start: 2rem;
+  .markdown-content h1 {
+    font-size: 2.25rem;
+    padding-block-end: 0.5rem;
+    border-block-end: 2px solid var(--color-line);
   }
 
-  .markdown-body h2 {
-    font-size: 1.5rem;
-    margin-block-start: 2.5rem;
-    padding-block-end: 0.4rem;
+  .markdown-content h2 {
+    font-size: 1.75rem;
+    padding-block-end: 0.375rem;
     border-block-end: 1px solid var(--color-line);
   }
 
-  .markdown-body h3 {
-    font-size: 1.2rem;
-    margin-block-start: 1.75rem;
+  .markdown-content h3 {
+    font-size: 1.35rem;
   }
 
-  .markdown-body a {
+  .markdown-content p {
+    margin-block-end: 1.25rem;
+  }
+
+  .markdown-content ul,
+  .markdown-content ol {
+    margin-block-end: 1.25rem;
+    padding-inline-start: 1.5rem;
+  }
+
+  .markdown-content ul {
+    list-style-type: disc;
+  }
+
+  .markdown-content ol {
+    list-style-type: decimal;
+  }
+
+  .markdown-content li + li {
+    margin-block-start: 0.5rem;
+  }
+
+  .markdown-content a {
+    /* brand-700, not brand-600: 6.70:1 on white. The README pins links to this
+       token precisely so check:contrast keeps passing. */
     color: var(--color-brand-700);
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-underline-offset: 4px;
   }
 
-  .markdown-body strong {
+  .markdown-content strong {
     font-weight: 700;
     color: var(--color-ink);
   }
 
-  .markdown-body ul,
-  .markdown-body ol {
-    padding-inline-start: 1.5rem;
+  .markdown-content blockquote {
+    border-inline-start: 4px solid var(--color-brand-600);
+    padding-inline-start: 1rem;
+    margin-inline: 0;
+    margin-block-end: 1.25rem;
+    color: var(--color-ink-muted);
   }
 
-  .markdown-body ul {
-    list-style: disc;
+  /* Italic only in Latin text. Arabic has no italic tradition and no Cairo
+     italic face, so the browser synthesises an oblique that mangles the
+     letterforms — and these articles are authored in Arabic. */
+  .markdown-content :where([dir="ltr"]) blockquote,
+  [dir="ltr"] .markdown-content blockquote {
+    font-style: italic;
   }
 
-  .markdown-body ol {
-    list-style: decimal;
-  }
-
-  .markdown-body li + li {
-    margin-block-start: 0.5rem;
-  }
-
-  .markdown-body blockquote {
-    padding: 0.85rem 1.1rem;
-    border-inline-start: 3px solid var(--color-accent-500);
-    background-color: var(--color-accent-100);
-    border-radius: 0.5rem;
-  }
-
-  .markdown-body blockquote > * + * {
-    margin-block-start: 0.75rem;
-  }
-
-  /* Wide requirement tables must scroll inside their own box; the page body
-     must never scroll horizontally. */
-  .markdown-body .table-scroll {
+  /* Wide requirement tables scroll inside their own box; the page body must
+     never scroll horizontally. Verified at 375px: the two widest tables
+     overflow their container by ~100px and the document does not move. */
+  .markdown-content .table-scroll {
     overflow-x: auto;
-    margin-block: 1.5rem;
+    margin-block-end: 1.5rem;
   }
 
-  .markdown-body table {
+  .markdown-content table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.925rem;
-    /* Tabular figures keep the euro thresholds from jittering column to
-       column, same reason as .tnum on the cost tables. */
+    font-size: 0.95rem;
+    /* Tabular figures stop the euro thresholds jittering column to column,
+       same reason as .tnum on the cost tables. */
     font-variant-numeric: tabular-nums;
   }
 
-  .markdown-body th,
-  .markdown-body td {
-    padding: 0.6rem 0.8rem;
+  .markdown-content th,
+  .markdown-content td {
     border: 1px solid var(--color-line);
+    padding: 0.75rem 1rem;
     text-align: start;
     vertical-align: top;
   }
 
-  .markdown-body thead th {
+  .markdown-content th {
     background-color: var(--color-paper);
     font-weight: 600;
     white-space: nowrap;
   }
 
-  .markdown-body hr {
+  .markdown-content hr {
     border: 0;
     border-block-start: 1px solid var(--color-line);
     margin-block: 2rem;
   }
 
-  .markdown-body img {
+  .markdown-content img {
     max-width: 100%;
     height: auto;
     border-radius: 0.75rem;
   }
 
-  .markdown-body code {
+  .markdown-content code {
     padding: 0.15em 0.4em;
     border-radius: 0.3rem;
     background-color: var(--color-brand-50);
     font-size: 0.9em;
   }
 
-  .markdown-body small {
+  .markdown-content small {
     color: var(--color-ink-muted);
     font-size: 0.8rem;
   }

@@ -115,9 +115,9 @@ export default async function ArticlePage({
         </p>
       </header>
 
-      {/* The compiled MDX. `.markdown-body` styles live in globals.css; the
+      {/* The compiled MDX. `.markdown-content` styles live in globals.css; the
           markdown itself carries no classes, keeping the source portable. */}
-      <div className="markdown-body">{content}</div>
+      <div className="markdown-content">{content}</div>
 
       {cover?.photographer ? (
         <p className="mt-10 text-xs text-ink-muted">
