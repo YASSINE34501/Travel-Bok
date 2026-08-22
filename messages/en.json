@@ -160,6 +160,12 @@
     "backToGuides": "All guides",
     "disclaimer": "This is general information, not legal advice. Always confirm details with the official immigration authority before applying."
   },
+  "Articles": {
+    "sectionTitle": "Updated 2026 immigration articles",
+    "sectionSubtitle": "Long-form analysis of the newest legal routes, with current thresholds and per-country applicant requirements.",
+    "read": "Read the article",
+    "footerHeading": "Immigration & work guides"
+  },
   "Ads": {
     "label": "Advertisement"
   },

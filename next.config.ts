@@ -19,6 +19,16 @@ const nextConfig: NextConfig = {
     // keeps the number of generated variants (and the cache) small.
     deviceSizes: [390, 640, 828, 1080, 1200, 1600],
   },
+  // The footer and the guides index read src/data/guides/*.md at render time,
+  // and the guides page revalidates on a 12h timer — so those reads happen on
+  // the server after the build, not only during it. Without this, tracing does
+  // not follow a runtime readdir() and the deployed bundle ships no markdown:
+  // getAllGuideDocs() catches the ENOENT and the article list silently renders
+  // empty in production while working perfectly in dev.
+  outputFileTracingIncludes: {
+    "/**": ["./src/data/guides/**/*.md"],
+  },
+
   experimental: {
     // Keeps the client bundle lean: only the icons actually used are shipped.
     optimizePackageImports: ["lucide-react"],

@@ -4,8 +4,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { CountryCard } from "@/components/guides/CountryCard";
+import { ArticleCard } from "@/components/guides/ArticleCard";
 import { PhotoCredits } from "@/components/common/PhotoCredits";
 import { getGuides } from "@/lib/queries";
+import { getAllGuideDocs } from "@/lib/guides-md";
 import { pageMetadata, JsonLd, breadcrumbSchema } from "@/lib/seo";
 import { pageDescription, pageTitle } from "@/lib/seo-content";
 import { keywordsFor } from "@/data/seo";
@@ -40,10 +42,12 @@ export default async function GuidesPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, nav, guides] = await Promise.all([
+  const [t, nav, articles, guides, docs] = await Promise.all([
     getTranslations("Guides"),
     getTranslations("Nav"),
+    getTranslations("Articles"),
     getGuides(),
+    getAllGuideDocs(),
   ]);
 
   return (
@@ -64,6 +68,28 @@ export default async function GuidesPage({
           </li>
         ))}
       </ul>
+
+      {docs.length > 0 ? (
+        <section className="mt-14">
+          <h2 className="text-2xl font-bold text-ink">{articles("sectionTitle")}</h2>
+          <p className="mt-2 max-w-2xl text-ink-muted">
+            {articles("sectionSubtitle")}
+          </p>
+
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {docs.map((doc) => (
+              <li key={doc.slug} className="h-full">
+                <ArticleCard
+                  slug={doc.slug}
+                  frontmatter={doc.frontmatter}
+                  locale={locale}
+                  label={articles("read")}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <AdSlot slot="4455667788" format="leaderboard" />
 
