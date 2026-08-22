@@ -218,13 +218,13 @@ cover_image:
 
 | الجهة | الرابط |
 | --- | --- |
-| وزارة الداخلية الإيطالية — التدفقات | <https://www.interno.gov.it> |
-| بوابة ALI لتقديم الطلبات | <https://portaleservizi.dlci.interno.it> |
-| وزارة العمل والسياسات الاجتماعية | <https://www.lavoro.gov.it> |
-| بوابة التأشيرات الإيطالية | <https://vistoperitalia.esteri.it> |
-| CIMEA — معادلة الشهادات | <https://www.cimea.it> |
-| وكالة الإيرادات — الرقم الضريبي | <https://www.agenziaentrate.gov.it> |
-| سجل اتفاقية أبوستيل (HCCH) | <https://www.hcch.net/en/instruments/conventions/status-table/?cid=41> |
-| نظام EES الأوروبي | <https://travel-europe.europa.eu/ees_en> |
+| وزارة الداخلية الإيطالية — التدفقات | [www.interno.gov.it](https://www.interno.gov.it) |
+| بوابة ALI لتقديم الطلبات | [portaleservizi.dlci.interno.it](https://portaleservizi.dlci.interno.it) |
+| وزارة العمل والسياسات الاجتماعية | [www.lavoro.gov.it](https://www.lavoro.gov.it) |
+| بوابة التأشيرات الإيطالية | [vistoperitalia.esteri.it](https://vistoperitalia.esteri.it) |
+| CIMEA — معادلة الشهادات | [www.cimea.it](https://www.cimea.it) |
+| وكالة الإيرادات — الرقم الضريبي | [www.agenziaentrate.gov.it](https://www.agenziaentrate.gov.it) |
+| سجل اتفاقية أبوستيل (HCCH) | [www.hcch.net/en/instruments/conventions/status-table/?cid=41](https://www.hcch.net/en/instruments/conventions/status-table/?cid=41) |
+| نظام EES الأوروبي | [travel-europe.europa.eu/ees_en](https://travel-europe.europa.eu/ees_en) |
 
 **آخر مراجعة:** 22 أغسطس 2026 · **المراجعة القادمة:** 20 نوفمبر 2026

@@ -221,13 +221,13 @@ cover_image:
 
 | الجهة | الرابط |
 | --- | --- |
-| البوابة الرسمية Make it in Germany | <https://www.make-it-in-germany.com> |
-| بوابة العامل الماهر الاتحادية | <https://www.bamf.de> |
-| قاعدة معادلة الشهادات anabin | <https://anabin.kmk.org> |
-| المكتب المركزي للتعليم الأجنبي ZAB | <https://www.kmk.org/zab> |
-| بوابة الاعتراف بالمؤهلات المهنية | <https://www.anerkennung-in-deutschland.de> |
-| وكالة العمل الاتحادية | <https://www.arbeitsagentur.de> |
-| سجل اتفاقية أبوستيل (HCCH) | <https://www.hcch.net/en/instruments/conventions/status-table/?cid=41> |
-| نظام EES الأوروبي | <https://travel-europe.europa.eu/ees_en> |
+| البوابة الرسمية Make it in Germany | [www.make-it-in-germany.com](https://www.make-it-in-germany.com) |
+| بوابة العامل الماهر الاتحادية | [www.bamf.de](https://www.bamf.de) |
+| قاعدة معادلة الشهادات anabin | [anabin.kmk.org](https://anabin.kmk.org) |
+| المكتب المركزي للتعليم الأجنبي ZAB | [www.kmk.org/zab](https://www.kmk.org/zab) |
+| بوابة الاعتراف بالمؤهلات المهنية | [www.anerkennung-in-deutschland.de](https://www.anerkennung-in-deutschland.de) |
+| وكالة العمل الاتحادية | [www.arbeitsagentur.de](https://www.arbeitsagentur.de) |
+| سجل اتفاقية أبوستيل (HCCH) | [www.hcch.net/en/instruments/conventions/status-table/?cid=41](https://www.hcch.net/en/instruments/conventions/status-table/?cid=41) |
+| نظام EES الأوروبي | [travel-europe.europa.eu/ees_en](https://travel-europe.europa.eu/ees_en) |
 
 **آخر مراجعة:** 22 أغسطس 2026 · **المراجعة القادمة:** 20 نوفمبر 2026

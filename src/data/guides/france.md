@@ -203,13 +203,13 @@ cover_image:
 
 | الجهة | الرابط |
 | --- | --- |
-| البوابة الرسمية للتأشيرات France-Visas | <https://france-visas.gouv.fr> |
-| الخدمة العامة — بطاقات الإقامة | <https://www.service-public.gouv.fr> |
-| المكتب الفرنسي للهجرة والاندماج OFII | <https://www.ofii.fr> |
-| Campus France — إجراء Études en France | <https://www.campusfrance.org> |
-| ENIC-NARIC France — معادلة الشهادات | <https://www.france-education-international.fr> |
-| French Tech Visa | <https://lafrenchtech.gouv.fr> |
-| سجل اتفاقية أبوستيل (HCCH) | <https://www.hcch.net/en/instruments/conventions/status-table/?cid=41> |
-| نظام EES الأوروبي | <https://travel-europe.europa.eu/ees_en> |
+| البوابة الرسمية للتأشيرات France-Visas | [france-visas.gouv.fr](https://france-visas.gouv.fr) |
+| الخدمة العامة — بطاقات الإقامة | [www.service-public.gouv.fr](https://www.service-public.gouv.fr) |
+| المكتب الفرنسي للهجرة والاندماج OFII | [www.ofii.fr](https://www.ofii.fr) |
+| Campus France — إجراء Études en France | [www.campusfrance.org](https://www.campusfrance.org) |
+| ENIC-NARIC France — معادلة الشهادات | [www.france-education-international.fr](https://www.france-education-international.fr) |
+| French Tech Visa | [lafrenchtech.gouv.fr](https://lafrenchtech.gouv.fr) |
+| سجل اتفاقية أبوستيل (HCCH) | [www.hcch.net/en/instruments/conventions/status-table/?cid=41](https://www.hcch.net/en/instruments/conventions/status-table/?cid=41) |
+| نظام EES الأوروبي | [travel-europe.europa.eu/ees_en](https://travel-europe.europa.eu/ees_en) |
 
 **آخر مراجعة:** 22 أغسطس 2026 · **المراجعة القادمة:** 20 نوفمبر 2026

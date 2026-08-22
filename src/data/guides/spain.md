@@ -212,13 +212,13 @@ cover_image:
 
 | الجهة | الرابط |
 | --- | --- |
-| وزارة الخارجية الإسبانية — التأشيرات | <https://www.exteriores.gob.es> |
-| وزارة الإدماج والهجرة | <https://www.inclusion.gob.es/web/migraciones> |
-| بوابة الأجانب الإلكترونية | <https://sede.administracionespublicas.gob.es> |
-| سجل اتفاقية أبوستيل (HCCH) | <https://www.hcch.net/en/instruments/conventions/status-table/?cid=41> |
-| نظام EES الأوروبي | <https://travel-europe.europa.eu/ees_en> |
-| شرطة غانا — CID | <https://police.gov.gh> |
-| منصة eCitizen الكينية | <https://www.ecitizen.go.ke> |
-| وزارة الخارجية الإماراتية — التصديقات | <https://www.mofa.gov.ae> |
+| وزارة الخارجية الإسبانية — التأشيرات | [www.exteriores.gob.es](https://www.exteriores.gob.es) |
+| وزارة الإدماج والهجرة | [www.inclusion.gob.es/web/migraciones](https://www.inclusion.gob.es/web/migraciones) |
+| بوابة الأجانب الإلكترونية | [sede.administracionespublicas.gob.es](https://sede.administracionespublicas.gob.es) |
+| سجل اتفاقية أبوستيل (HCCH) | [www.hcch.net/en/instruments/conventions/status-table/?cid=41](https://www.hcch.net/en/instruments/conventions/status-table/?cid=41) |
+| نظام EES الأوروبي | [travel-europe.europa.eu/ees_en](https://travel-europe.europa.eu/ees_en) |
+| شرطة غانا — CID | [police.gov.gh](https://police.gov.gh) |
+| منصة eCitizen الكينية | [www.ecitizen.go.ke](https://www.ecitizen.go.ke) |
+| وزارة الخارجية الإماراتية — التصديقات | [www.mofa.gov.ae](https://www.mofa.gov.ae) |
 
 **آخر مراجعة:** 22 أغسطس 2026 · **المراجعة القادمة:** 20 نوفمبر 2026
