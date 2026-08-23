@@ -4,41 +4,28 @@
 # Country / الدولة: Spain — إسبانيا
 # ==========================================================================
 
-slug: "es"
-country_en: "Spain"
-country_ar: "إسبانيا"
-locale_primary: "ar"
+locale: "ar"
+slug: "spain"
+country: "إسبانيا"
 last_reviewed: "2026-08-22"
 review_cycle_days: 90
 
-# --- H1 / Title (dual language) ---
-title_ar: "الهجرة إلى إسبانيا 2026: فيزا الرحّالة الرقمي"
-title_en: "Spain Immigration 2026: Digital Nomad & NLV Visas"
-h1_ar: "الهجرة القانونية إلى إسبانيا 2026–2027: المسارات المتاحة والشروط المُحدَّثة"
-h1_en: "Legal Immigration to Spain 2026–2027: Updated Routes and Requirements"
+# --- H1 / Title ---
+title: "تأشيرة إسبانيا 2026: الرحّالة الرقمي"
+h1: "الهجرة القانونية إلى إسبانيا 2026–2027: المسارات المتاحة والشروط المُحدَّثة"
 
-# --- Meta descriptions (< 160 characters each) ---
-meta_description_ar: "فيزا الرحّالة الرقمي 2,849€ شهريًا، الإقامة غير المربحة 2,400€، والأَرَيغو خلال سنتين. شروط غانا وكينيا والإمارات ونيوزيلندا."
-meta_description_en: "Spain 2026: Digital Nomad Visa at EUR 2,849/mo, Non-Lucrative Visa at EUR 2,400/mo, arraigo after 2 years. Requirements for GH, KE, AE, NZ."
+# --- Meta description (< 160 characters) ---
+meta_description: "دليل تأشيرات إسبانيا 2026: الرحّالة الرقمي 2,849 يورو شهريًا، والإقامة غير المربحة 2,400 يورو، والأَرَيغو خلال سنتين، وخطوات التقديم من غانا وكينيا والإمارات."
 
 # --- Target keywords ---
-keywords_ar:
+keywords:
   - "الهجرة إلى إسبانيا 2026"
   - "فيزا الرحالة الرقمي إسبانيا"
   - "الإقامة غير المربحة إسبانيا"
   - "شروط فيزا العمل عن بعد إسبانيا"
   - "الأريغو الاجتماعي إسبانيا سنتين"
   - "الإقامة الذهبية إسبانيا ملغاة"
-keywords_en:
-  - "spain digital nomad visa 2026"
-  - "spain non lucrative visa income requirement"
-  - "spain arraigo 2 years"
-  - "spain golden visa abolished"
-  - "move to spain from kenya"
-  - "spain visa ghana"
 
-canonical_path: "/ar/guides/es"
-hreflang_alternates: ["/en/guides/es", "/ar/guides/es"]
 schema_types: ["Article", "FAQPage", "BreadcrumbList"]
 
 cover_image:
@@ -46,8 +33,7 @@ cover_image:
   source: "Unsplash"
   photographer: "Jorge Fernández Salas"
   page: "https://unsplash.com/photos/v8XeGZf8tcs"
-  alt_ar: "منظر جوي لشارع غران بيا في مدريد عند الغروب"
-  alt_en: "Aerial view of Gran Via, Madrid at dusk"
+  alt: "منظر جوي لشارع غران بيا في مدريد عند الغروب"
   license: "Unsplash License"
 
 faq:
@@ -62,12 +48,6 @@ faq:
   - q: "كم تستغرق معالجة الطلب؟"
     a: "من القنصلية: عادةً من 4 إلى 8 أسابيع. ومن داخل إسبانيا عبر الوحدة الكبرى للشركات UGE-CE: نحو 20 يوم عمل، مع الصمت الإداري الإيجابي، أي أن عدم الرد خلال المهلة يُفسَّر لصالحك."
 ---
-
-![منظر جوي لشارع غران بيا في مدريد عند الغروب](https://images.unsplash.com/photo-1543785734-4b6e564642f8?auto=format&fit=crop&w=1600&q=70)
-
-<small>الصورة: Jorge Fernández Salas عبر Unsplash — رخصة Unsplash.</small>
-
-# الهجرة القانونية إلى إسبانيا 2026–2027: المسارات المتاحة والشروط المُحدَّثة
 
 > **تنبيه التحقّق (Verification Notice):** جميع الأرقام في هذا الدليل مُراجَعة بتاريخ **22 أغسطس 2026**. عتبات الدخل الإسبانية مرتبطة بمؤشّرين يتغيّران سنويًا: **الحد الأدنى للأجور (SMI)** و**مؤشّر IPREM**. تحقّق من الرقم الساري يوم تقديم طلبك عبر الروابط الرسمية في قسم المصادر.
 

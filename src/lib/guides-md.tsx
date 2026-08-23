@@ -9,7 +9,7 @@ import remarkGfm from "remark-gfm";
 import type { Locale } from "@/i18n/routing";
 
 /**
- * Reader for the long-form markdown guides in src/data/guides/.
+ * Reader for the long-form markdown articles in src/data/guides/.
  *
  * These are deliberately separate from the structured guides in src/data/*.ts:
  * those are `GuideSections` objects built so two countries can be *compared*,
@@ -17,56 +17,41 @@ import type { Locale } from "@/i18n/routing";
  * prose into a type whose whole purpose is to keep every country answering the
  * same five questions.
  *
- * Everything here runs at build time only — see `dynamicParams = false` on the
- * page. The markdown lives in the repo, so it cannot change without a deploy,
- * which is why there is no revalidate timer: an ISR window would re-read files
- * that are guaranteed not to have moved.
+ * **One file per locale — `{slug}.{locale}.md`.** An earlier version kept one
+ * bilingual file whose body was Arabic and whose frontmatter carried both
+ * languages, which meant /en/articles/* served Arabic prose under
+ * <html lang="en"> with Arabic FAQPage markup: a language-mismatch and a
+ * structured-data problem at once. Splitting per locale makes the wrong-language
+ * page impossible to build rather than merely discouraged.
+ *
+ * Everything here runs at build time — see `dynamicParams = false` on the page.
+ * The markdown lives in the repo, so it cannot change without a deploy, which
+ * is why there is no revalidate timer. next.config.ts traces these files into
+ * the deployment because the footer reads them at render time on every page.
  */
 
 const GUIDES_DIR = path.join(process.cwd(), "src", "data", "guides");
 
-/**
- * Element overrides for the compiled markdown.
- *
- * The country-requirement tables are far wider than a phone. Giving each one
- * its own scroll container is what keeps the *page* from scrolling sideways —
- * a table left bare would push the whole document past the viewport.
- */
-const MDX_COMPONENTS = {
-  table: (props: React.ComponentPropsWithoutRef<"table">) => (
-    <div className="table-scroll">
-      <table {...props} />
-    </div>
-  ),
-  // Markdown links are relative or external; open only the external ones in a
-  // new tab, and never without noopener.
-  a: ({ href = "", ...props }: React.ComponentPropsWithoutRef<"a">) =>
-    href.startsWith("http") ? (
-      <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
-    ) : (
-      <a href={href} {...props} />
-    ),
-};
-
 /** Frontmatter contract every file in src/data/guides/ must satisfy. */
 export type GuideDocFrontmatter = {
+  locale: Locale;
   slug: string;
-  country_en: string;
-  country_ar: string;
+  country: string;
   last_reviewed: string;
 
-  title_ar: string;
-  title_en: string;
-  h1_ar: string;
-  h1_en: string;
+  title: string;
+  h1: string;
+  meta_description: string;
+  keywords?: string[];
 
-  meta_description_ar: string;
-  meta_description_en: string;
-
-  keywords_ar?: string[];
-  keywords_en?: string[];
-
-  canonical_path?: string;
+  cover_image?: {
+    url: string;
+    source?: string;
+    photographer?: string;
+    page?: string;
+    alt?: string;
+    license?: string;
+  };
 
   /**
    * Frequently-asked questions, structured rather than prose.
@@ -77,86 +62,95 @@ export type GuideDocFrontmatter = {
    * so the two must never drift apart.
    */
   faq?: { q: string; a: string }[];
-
-  cover_image?: {
-    url: string;
-    source?: string;
-    photographer?: string;
-    page?: string;
-    alt_ar?: string;
-    alt_en?: string;
-    license?: string;
-  };
 };
 
 export type GuideDoc = {
-  /** URL segment — the filename without .md, e.g. "spain". */
+  /** URL segment — the filename stem, e.g. "spain". */
   slug: string;
+  locale: Locale;
   frontmatter: GuideDocFrontmatter;
   content: React.ReactElement;
 };
 
-/** Slugs for generateStaticParams, sorted so the build output is stable. */
-export async function listGuideDocSlugs(): Promise<string[]> {
+/**
+ * Every requirement table in these articles is wider than a 375px phone. The
+ * `.table-scroll` styles exist in globals.css, but markdown emits a bare
+ * <table> with nowhere to hang the class — so the wrapper is injected here.
+ *
+ * Without it the table stretches the document instead of scrolling inside its
+ * own box, and the whole page scrolls sideways on mobile. Verified at 375px:
+ * scrollWidth 484 before, equal to the viewport after.
+ */
+const MDX_COMPONENTS = {
+  table: (props: React.ComponentPropsWithoutRef<"table">) => (
+    <div className="table-scroll">
+      <table {...props} />
+    </div>
+  ),
+};
+
+const FILE_RE = /^([a-z0-9-]+)\.([a-z]{2})\.md$/;
+
+async function listFiles(): Promise<{ slug: string; locale: string }[]> {
   let entries: string[];
   try {
     entries = await readdir(GUIDES_DIR);
   } catch {
     // No markdown directory at all is a valid state — the route simply has no
-    // pages, exactly like the Supabase fallback in queries.ts degrades quietly.
+    // pages, the same way queries.ts degrades quietly to its bundled dataset.
     return [];
   }
 
   return entries
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => f.replace(/\.md$/, ""))
-    .sort();
+    .map((f) => FILE_RE.exec(f))
+    .filter((m): m is RegExpExecArray => m !== null)
+    .map((m) => ({ slug: m[1], locale: m[2] }))
+    .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 /**
- * Remove the cover image, its credit line and the first H1 from the body.
+ * Every (locale, slug) pair that actually has a file.
  *
- * These files are published to GitHub as standalone documents too, where a
- * title and a hero image are exactly what you want. On the site the page
- * already renders both from frontmatter, so leaving them in the body produced
- * the image twice and — worse — two <h1> elements, which is one of the failures
- * `npm run check:seo` is built to catch.
- *
- * Stripping here rather than editing the files keeps both surfaces correct from
- * a single source.
+ * generateStaticParams and the sitemap both build from this, so a slug that
+ * exists in only one language never produces a route — or an hreflang
+ * alternate — pointing at a page that would 404.
  */
-function stripHero(source: string): string {
-  const match = source.match(/^(---\r?\n[\s\S]*?\r?\n---\r?\n)([\s\S]*)$/);
-  if (!match) return source;
+export async function listGuideDocParams(): Promise<{ locale: Locale; slug: string }[]> {
+  const files = await listFiles();
+  return files.map((f) => ({ locale: f.locale as Locale, slug: f.slug }));
+}
 
-  const [, frontmatter, body] = match;
+/** Distinct slugs, regardless of which locales they exist in. */
+export async function listGuideDocSlugs(): Promise<string[]> {
+  const files = await listFiles();
+  return [...new Set(files.map((f) => f.slug))];
+}
 
-  const cleaned = body
-    .replace(/^\s*!\[[^\]]*\]\([^)]*\)\s*$/m, "") // hero image
-    .replace(/^\s*<small>[\s\S]*?<\/small>\s*$/m, "") // its credit line
-    .replace(/^\s*#\s+.+$/m, "") // the duplicate H1
-    .replace(/^\s*\n+/, "");
-
-  return frontmatter + cleaned;
+/** The locales a given slug is published in. */
+export async function localesForSlug(slug: string): Promise<Locale[]> {
+  const files = await listFiles();
+  return files.filter((f) => f.slug === slug).map((f) => f.locale as Locale);
 }
 
 /**
- * Compile one article. Returns null when the slug does not exist so the page
- * can call notFound() rather than crashing the build on a bad link.
+ * Compile one article in one language. Returns null when that combination does
+ * not exist, so the page can call notFound() instead of rendering the wrong
+ * language or crashing the build on a bad link.
  */
-export async function getGuideDoc(slug: string): Promise<GuideDoc | null> {
-  // Defend the path join: a slug arrives from the URL, and "../../.env" would
-  // otherwise read outside the guides directory.
+export async function getGuideDoc(
+  slug: string,
+  locale: Locale,
+): Promise<GuideDoc | null> {
+  // Defend the path join: the slug arrives from the URL, and "../../.env"
+  // would otherwise read outside the guides directory.
   if (!/^[a-z0-9-]+$/.test(slug)) return null;
 
   let source: string;
   try {
-    source = await readFile(path.join(GUIDES_DIR, `${slug}.md`), "utf8");
+    source = await readFile(path.join(GUIDES_DIR, `${slug}.${locale}.md`), "utf8");
   } catch {
     return null;
   }
-
-  source = stripHero(source);
 
   const { content, frontmatter } = await compileMDX<GuideDocFrontmatter>({
     source,
@@ -164,44 +158,19 @@ export async function getGuideDoc(slug: string): Promise<GuideDoc | null> {
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-        // GFM is what turns the requirement tables and strikethroughs in these
-        // articles into real markup; without it every table renders as a wall
-        // of pipe characters.
+        // GFM is what turns the requirement tables in these articles into real
+        // markup; without it every table renders as a wall of pipe characters.
         remarkPlugins: [remarkGfm],
       },
     },
   });
 
-  return { slug, frontmatter, content };
+  return { slug, locale, frontmatter, content };
 }
 
-/** All articles, for the index listing. */
-export async function getAllGuideDocs(): Promise<GuideDoc[]> {
-  const slugs = await listGuideDocSlugs();
-  const docs = await Promise.all(slugs.map(getGuideDoc));
+/** All articles published in one locale, for index listings. */
+export async function getGuideDocsForLocale(locale: Locale): Promise<GuideDoc[]> {
+  const slugs = [...new Set((await listFiles()).filter((f) => f.locale === locale).map((f) => f.slug))];
+  const docs = await Promise.all(slugs.map((slug) => getGuideDoc(slug, locale)));
   return docs.filter((d): d is GuideDoc => d !== null);
-}
-
-/** Pick the localised half of a bilingual frontmatter pair. */
-export function localised(
-  frontmatter: GuideDocFrontmatter,
-  field: "title" | "h1" | "meta_description" | "country",
-  locale: Locale,
-): string {
-  const key = `${field}_${locale}` as keyof GuideDocFrontmatter;
-  const value = frontmatter[key];
-  if (typeof value === "string") return value;
-
-  // Arabic is the authored language of these articles; English frontmatter is
-  // present for search engines. Falling back to _en keeps a half-translated
-  // file rendering instead of throwing.
-  const fallback = frontmatter[`${field}_en` as keyof GuideDocFrontmatter];
-  return typeof fallback === "string" ? fallback : "";
-}
-
-export function keywordsFor(
-  frontmatter: GuideDocFrontmatter,
-  locale: Locale,
-): string[] {
-  return (locale === "ar" ? frontmatter.keywords_ar : frontmatter.keywords_en) ?? [];
 }

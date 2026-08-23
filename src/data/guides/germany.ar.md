@@ -4,41 +4,28 @@
 # Country / الدولة: Germany — ألمانيا
 # ==========================================================================
 
-slug: "de"
-country_en: "Germany"
-country_ar: "ألمانيا"
-locale_primary: "ar"
+locale: "ar"
+slug: "germany"
+country: "ألمانيا"
 last_reviewed: "2026-08-22"
 review_cycle_days: 90
 
-# --- H1 / Title (dual language) ---
-title_ar: "الهجرة إلى ألمانيا 2026: بطاقة الفرص والبطاقة الزرقاء"
-title_en: "Germany Immigration 2026: Opportunity Card & Blue Card"
-h1_ar: "الهجرة القانونية إلى ألمانيا 2026–2027: بطاقة الفرص ونظام النقاط والبطاقة الزرقاء"
-h1_en: "Legal Immigration to Germany 2026–2027: Opportunity Card, Points System and Blue Card"
+# --- H1 / Title ---
+title: "بطاقة الفرصة والبطاقة الزرقاء ألمانيا 2026"
+h1: "الهجرة القانونية إلى ألمانيا 2026–2027: بطاقة الفرص ونظام النقاط والبطاقة الزرقاء"
 
-# --- Meta descriptions (< 160 characters each) ---
-meta_description_ar: "بطاقة الفرص بنظام النقاط، والبطاقة الزرقاء بعتبة 50,700€ لعام 2026. معادلة الشهادة وشروط غانا وكينيا والإمارات ونيوزيلندا."
-meta_description_en: "Germany 2026: Opportunity Card points system, EU Blue Card at EUR 50,700 (45,934 shortage). Degree recognition and steps for GH, KE, AE, NZ."
+# --- Meta description (< 160 characters) ---
+meta_description: "دليل الهجرة إلى ألمانيا 2026: بطاقة الفرصة بنظام النقاط، والبطاقة الزرقاء بعتبة 50,700 يورو، ومعادلة الشهادة، وخطوات غانا وكينيا والإمارات ونيوزيلندا."
 
 # --- Target keywords ---
-keywords_ar:
+keywords:
   - "بطاقة الفرص الألمانية نظام النقاط"
   - "الهجرة إلى ألمانيا 2026"
   - "البطاقة الزرقاء الأوروبية ألمانيا راتب"
   - "معادلة الشهادة في ألمانيا anabin"
   - "الحساب المجمد ألمانيا 2026"
   - "الجنسية الألمانية خمس سنوات"
-keywords_en:
-  - "germany opportunity card 2026 points"
-  - "eu blue card germany salary 2026"
-  - "chancenkarte requirements"
-  - "germany blocked account amount 2026"
-  - "germany skilled worker visa kenya"
-  - "anabin degree recognition"
 
-canonical_path: "/ar/guides/de"
-hreflang_alternates: ["/en/guides/de", "/ar/guides/de"]
 schema_types: ["Article", "FAQPage", "BreadcrumbList"]
 
 cover_image:
@@ -46,8 +33,7 @@ cover_image:
   source: "Unsplash"
   photographer: "Claudio Schwarz"
   page: "https://unsplash.com/photos/brandenburg-gate-berlin-cQ41AMy31Zw"
-  alt_ar: "بوابة براندنبورغ في برلين"
-  alt_en: "Brandenburg Gate, Berlin"
+  alt: "بوابة براندنبورغ في برلين"
   license: "Unsplash License"
 
 faq:
@@ -62,12 +48,6 @@ faq:
   - q: "ما نسبة قبول طلبات التأشيرة الألمانية؟"
     a: "ألمانيا لا تنشر نسب قبول للتأشيرات الوطنية بحسب الفئة. عمليًا، سبب التعثّر الأول ليس الرفض بل الاعتراف بالشهادة: الملف الذي يصل إلى موعد القنصلية بمعادلة غير مكتملة عبر anabin أو ZAB يتوقّف قبل أن يُقيَّم أصلًا."
 ---
-
-![بوابة براندنبورغ في برلين](https://images.unsplash.com/photo-1570862687812-8b841fad0733?auto=format&fit=crop&w=1600&q=70)
-
-<small>الصورة: Claudio Schwarz عبر Unsplash — رخصة Unsplash.</small>
-
-# الهجرة القانونية إلى ألمانيا 2026–2027: بطاقة الفرص ونظام النقاط والبطاقة الزرقاء
 
 > **تنبيه التحقّق (Verification Notice):** الأرقام مُراجَعة بتاريخ **22 أغسطس 2026**. عتبات البطاقة الزرقاء الألمانية **تتغيّر في الأول من يناير كل عام** لأنها مربوطة بسقف اشتراكات التقاعد. تحقّق من عتبة السنة الجارية قبل توقيع أي عقد عمل.
 

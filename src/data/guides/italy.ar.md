@@ -4,41 +4,28 @@
 # Country / الدولة: Italy — إيطاليا
 # ==========================================================================
 
-slug: "it"
-country_en: "Italy"
-country_ar: "إيطاليا"
-locale_primary: "ar"
+locale: "ar"
+slug: "italy"
+country: "إيطاليا"
 last_reviewed: "2026-08-22"
 review_cycle_days: 90
 
-# --- H1 / Title (dual language) ---
-title_ar: "الهجرة إلى إيطاليا 2026: مرسوم التدفقات والرحّالة"
-title_en: "Italy Immigration 2026: Decreto Flussi & Nomad Visa"
-h1_ar: "الهجرة القانونية إلى إيطاليا 2026–2028: حصص مرسوم التدفقات والمسارات خارج الحصص"
-h1_en: "Legal Immigration to Italy 2026–2028: Decreto Flussi Quotas and Quota-Free Routes"
+# --- H1 / Title ---
+title: "تأشيرة إيطاليا 2026: التدفقات والرحّالة"
+h1: "الهجرة القانونية إلى إيطاليا 2026–2028: حصص مرسوم التدفقات والمسارات خارج الحصص"
 
-# --- Meta descriptions (< 160 characters each) ---
-meta_description_ar: "حصص مرسوم التدفقات 2026–2028 ومواعيد الكليك داي، وفيزا الرحّالة الرقمي 28,000€. شروط غانا وكينيا والإمارات ونيوزيلندا."
-meta_description_en: "Italy 2026: Decreto Flussi 2026-2028 quotas and click days, Digital Nomad Visa at EUR 28,000, investor routes. Steps for GH, KE, AE and NZ."
+# --- Meta description (< 160 characters) ---
+meta_description: "دليل تأشيرات إيطاليا 2026: حصص مرسوم التدفقات ومواعيد الكليك داي، وفيزا الرحّالة الرقمي 28,000 يورو، وخطوات التقديم من غانا وكينيا والإمارات ونيوزيلندا."
 
 # --- Target keywords ---
-keywords_ar:
+keywords:
   - "مرسوم التدفقات إيطاليا 2026"
   - "كليك داي إيطاليا موعد"
   - "فيزا الرحالة الرقمي إيطاليا"
   - "الهجرة إلى إيطاليا 2026"
   - "تأشيرة المستثمر إيطاليا"
   - "نولا أوستا إيطاليا"
-keywords_en:
-  - "decreto flussi 2026 click day"
-  - "italy digital nomad visa 2026 income"
-  - "italy work visa quota 2027"
-  - "italy investor visa amounts"
-  - "italy nulla osta process"
-  - "italy visa nairobi vfs"
 
-canonical_path: "/ar/guides/it"
-hreflang_alternates: ["/en/guides/it", "/ar/guides/it"]
 schema_types: ["Article", "FAQPage", "BreadcrumbList"]
 
 cover_image:
@@ -46,8 +33,7 @@ cover_image:
   source: "Unsplash"
   photographer: "Spencer Davis"
   page: "https://unsplash.com/photos/aerial-view-of-colosseum-at-rome-italy-ckotRXopwRM"
-  alt_ar: "منظر جوي للكولوسيوم في روما"
-  alt_en: "Aerial view of the Colosseum, Rome"
+  alt: "منظر جوي للكولوسيوم في روما"
   license: "Unsplash License"
 
 faq:
@@ -62,12 +48,6 @@ faq:
   - q: "ما نسبة قبول طلبات التأشيرة الإيطالية؟"
     a: "إيطاليا لا تنشر نسب قبول للتأشيرات الوطنية. وفي مسار الحصص تحديدًا، المسألة ليست قبولًا أو رفضًا بل سباقًا زمنيًا: الطلب الذي لم يكتمل تسجيله المسبق لا يمكن إرساله أصلًا يوم الكليك داي، مهما كانت مؤهّلات صاحبه."
 ---
-
-![منظر جوي للكولوسيوم في روما](https://images.unsplash.com/photo-1555992828-ca4dbe41d294?auto=format&fit=crop&w=1600&q=70)
-
-<small>الصورة: Spencer Davis عبر Unsplash — رخصة Unsplash.</small>
-
-# الهجرة القانونية إلى إيطاليا 2026–2028: حصص مرسوم التدفقات والمسارات خارج الحصص
 
 > **تنبيه التحقّق (Verification Notice):** الأرقام مُراجَعة بتاريخ **22 أغسطس 2026**. مواعيد "الكليك داي" تُحدَّد بمرسوم وزاري منفصل كل سنة، وقد تتغيّر بأسابيع. تابع بوابة وزارة الداخلية الإيطالية مباشرة.
 

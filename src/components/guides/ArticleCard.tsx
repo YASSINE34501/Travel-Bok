@@ -23,17 +23,9 @@ export function ArticleCard({
   locale: Locale;
   label: string;
 }) {
-  const title =
-    (locale === "ar" ? frontmatter.title_ar : frontmatter.title_en) ?? slug;
-  const description =
-    (locale === "ar"
-      ? frontmatter.meta_description_ar
-      : frontmatter.meta_description_en) ?? "";
-  const country =
-    (locale === "ar" ? frontmatter.country_ar : frontmatter.country_en) ?? "";
+  const { title, meta_description: description, country } = frontmatter;
   const cover = frontmatter.cover_image;
-  const coverAlt =
-    (locale === "ar" ? cover?.alt_ar : cover?.alt_en) ?? country;
+  const coverAlt = cover?.alt ?? country;
 
   return (
     <Link

@@ -2,18 +2,21 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Logo } from "@/components/brand/Logo";
 import { Link } from "@/i18n/navigation";
 import { CookieSettingsButton } from "@/components/ads/ConsentBanner";
-import { getAllGuideDocs } from "@/lib/guides-md";
+import { getGuideDocsForLocale } from "@/lib/guides-md";
 import type { Locale } from "@/i18n/routing";
 
 export async function Footer() {
-  const [t, nav, meta, articles, locale, docs] = await Promise.all([
+  const [t, nav, meta, articles, locale] = await Promise.all([
     getTranslations("Footer"),
     getTranslations("Nav"),
     getTranslations("Meta"),
     getTranslations("Articles"),
     getLocale() as Promise<Locale>,
-    getAllGuideDocs(),
   ]);
+
+  // Locale-scoped: the footer must never link to an article that is not
+  // published in the language the visitor is reading.
+  const docs = await getGuideDocsForLocale(locale);
 
   return (
     <footer className="mt-20 border-t border-line bg-surface">
@@ -48,9 +51,7 @@ export async function Footer() {
                   href={"/articles/" + doc.slug}
                   className="hover:text-brand-700"
                 >
-                  {locale === "ar"
-                    ? doc.frontmatter.country_ar
-                    : doc.frontmatter.country_en}
+                  {doc.frontmatter.country}
                 </Link>
               </li>
             ))}

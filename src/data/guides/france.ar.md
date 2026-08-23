@@ -4,41 +4,28 @@
 # Country / الدولة: France — فرنسا
 # ==========================================================================
 
-slug: "fr"
-country_en: "France"
-country_ar: "فرنسا"
-locale_primary: "ar"
+locale: "ar"
+slug: "france"
+country: "فرنسا"
 last_reviewed: "2026-08-22"
 review_cycle_days: 90
 
-# --- H1 / Title (dual language) ---
-title_ar: "الهجرة إلى فرنسا 2026: بطاقة المواهب ومسار الخريجين"
-title_en: "France Immigration 2026: Talent Permit & Graduate Route"
-h1_ar: "الهجرة القانونية إلى فرنسا 2026–2027: بطاقة المواهب والبطاقة الزرقاء ومسار الخريجين"
-h1_en: "Legal Immigration to France 2026–2027: Talent Permit, Blue Card and the Graduate Route"
+# --- H1 / Title ---
+title: "تأشيرة فرنسا 2026: بطاقة المواهب"
+h1: "الهجرة القانونية إلى فرنسا 2026–2027: بطاقة المواهب والبطاقة الزرقاء ومسار الخريجين"
 
-# --- Meta descriptions (< 160 characters each) ---
-meta_description_ar: "بطاقة المواهب براتب 39,582€ والبطاقة الزرقاء 59,373€، وتصريح البحث عن عمل بعد التخرّج. شروط غانا وكينيا والإمارات ونيوزيلندا."
-meta_description_en: "France 2026: Talent permit at EUR 39,582, EU Blue Card at EUR 59,373, and the 12-month post-study permit. Steps for GH, KE, AE and NZ."
+# --- Meta description (< 160 characters) ---
+meta_description: "دليل تأشيرات فرنسا 2026: بطاقة المواهب براتب 39,582 يورو، والبطاقة الزرقاء 59,373 يورو، وتصريح ما بعد التخرّج، وخطوات غانا وكينيا والإمارات ونيوزيلندا."
 
 # --- Target keywords ---
-keywords_ar:
+keywords:
   - "جواز المواهب فرنسا 2026"
   - "شروط بطاقة المواهب راتب"
   - "البطاقة الزرقاء الأوروبية فرنسا"
   - "تصريح البحث عن عمل بعد التخرج فرنسا"
   - "الهجرة إلى فرنسا 2026"
   - "الجنسية الفرنسية سنتان خريج"
-keywords_en:
-  - "france talent passport 2026 salary"
-  - "passeport talent salarie qualifie threshold"
-  - "eu blue card france 2026"
-  - "france post study work visa aps rece"
-  - "france work visa ghana vfs"
-  - "french tech visa"
 
-canonical_path: "/ar/guides/fr"
-hreflang_alternates: ["/en/guides/fr", "/ar/guides/fr"]
 schema_types: ["Article", "FAQPage", "BreadcrumbList"]
 
 cover_image:
@@ -46,8 +33,7 @@ cover_image:
   source: "Unsplash"
   photographer: "Christel F."
   page: "https://unsplash.com/photos/paris-skyline-with-the-eiffel-tower-in-view-qkRgQunUznI"
-  alt_ar: "أفق باريس ويظهر فيه برج إيفل"
-  alt_en: "Paris skyline with the Eiffel Tower in view"
+  alt: "أفق باريس ويظهر فيه برج إيفل"
   license: "Unsplash License"
 
 faq:
@@ -62,12 +48,6 @@ faq:
   - q: "ما نسبة قبول طلبات التأشيرة الفرنسية؟"
     a: "فرنسا لا تنشر نسب قبول للتأشيرات الطويلة بحسب الفئة. المنشور يخصّ تأشيرات شنغن القصيرة، وبلغ متوسط الرفض العالمي 14.8% في 2024 مقابل أكثر من 45% لطلبات غانا. وفي مسار المواهب، العامل الحاسم هو عقد عمل يستوفي العتبة، لا جنسية مقدّم الطلب."
 ---
-
-![أفق باريس ويظهر فيه برج إيفل](https://images.unsplash.com/photo-1749647075603-118969f220af?auto=format&fit=crop&w=1600&q=70)
-
-<small>الصورة: Christel F. عبر Unsplash — رخصة Unsplash.</small>
-
-# الهجرة القانونية إلى فرنسا 2026–2027: بطاقة المواهب والبطاقة الزرقاء ومسار الخريجين
 
 > **تنبيه التحقّق (Verification Notice):** الأرقام مُراجَعة بتاريخ **22 أغسطس 2026**. عتبات بطاقة المواهب تُحدَّد بقرار وزاري (arrêté) ويُعاد النظر فيها دوريًا، وبعض الفئات ما زالت مرتبطة بالحد الأدنى للأجور SMIC الذي يتغيّر في يناير. تحقّق من العتبة السارية يوم توقيع عقدك.
 

@@ -4,14 +4,9 @@ import { notFound } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { setRequestLocale } from "next-intl/server";
 
-import { routing, type Locale } from "@/i18n/routing";
+import type { Locale } from "@/i18n/routing";
 import { formatDate } from "@/lib/format";
-import {
-  getGuideDoc,
-  keywordsFor,
-  listGuideDocSlugs,
-  localised,
-} from "@/lib/guides-md";
+import { getGuideDoc, listGuideDocParams } from "@/lib/guides-md";
 import {
   pageMetadata,
   JsonLd,
@@ -28,11 +23,13 @@ import { AdSlot } from "@/components/ads/AdSlot";
  */
 export const dynamicParams = false;
 
+/**
+ * Only (locale, slug) pairs that actually have a file. A slug published in one
+ * language must not generate a route in the other — an empty page would be
+ * worse than a 404, and its hreflang alternate would point at nothing.
+ */
 export async function generateStaticParams() {
-  const slugs = await listGuideDocSlugs();
-  return routing.locales.flatMap((locale) =>
-    slugs.map((slug) => ({ locale, slug })),
-  );
+  return listGuideDocParams();
 }
 
 export async function generateMetadata({
@@ -41,17 +38,17 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const doc = await getGuideDoc(slug);
+  const doc = await getGuideDoc(slug, locale);
   if (!doc) return {};
 
   return pageMetadata({
     // No brand suffix here: title.template in the layout appends it, and adding
     // it in both places produces "… | TRAVLBOK | TRAVLBOK".
-    title: localised(doc.frontmatter, "title", locale),
-    description: localised(doc.frontmatter, "meta_description", locale),
+    title: doc.frontmatter.title,
+    description: doc.frontmatter.meta_description,
     path: `/articles/${slug}`,
     locale,
-    keywords: keywordsFor(doc.frontmatter, locale),
+    keywords: doc.frontmatter.keywords ?? [],
   });
 }
 
@@ -63,23 +60,20 @@ export default async function ArticlePage({
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const doc = await getGuideDoc(slug);
+  const doc = await getGuideDoc(slug, locale);
   if (!doc) notFound();
 
   const { frontmatter, content } = doc;
-  const heading = localised(frontmatter, "h1", locale);
-  const description = localised(frontmatter, "meta_description", locale);
   const faq = frontmatter.faq ?? [];
   const cover = frontmatter.cover_image;
-  const coverAlt =
-    (locale === "ar" ? cover?.alt_ar : cover?.alt_en) ?? heading;
+  const coverAlt = cover?.alt ?? frontmatter.h1;
 
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-10">
       <JsonLd
         data={articleSchema({
-          headline: heading,
-          description,
+          headline: frontmatter.h1,
+          description: frontmatter.meta_description,
           path: `/articles/${slug}`,
           locale,
           updatedAt: frontmatter.last_reviewed,
@@ -89,7 +83,7 @@ export default async function ArticlePage({
         data={breadcrumbSchema(
           [
             { name: "TRAVLBOK", path: "/" },
-            { name: heading, path: `/articles/${slug}` },
+            { name: frontmatter.country, path: `/articles/${slug}` },
           ],
           locale,
         )}
@@ -115,8 +109,8 @@ export default async function ArticlePage({
       ) : null}
 
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-          {heading}
+        <h1 className="font-display text-3xl font-bold tracking-tight text-balance text-ink sm:text-4xl">
+          {frontmatter.h1}
         </h1>
         <p className="mt-3 text-sm text-ink-muted">
           {formatDate(frontmatter.last_reviewed, locale)}
@@ -124,7 +118,7 @@ export default async function ArticlePage({
       </header>
 
       {/* The compiled MDX. `.markdown-content` styles live in globals.css; the
-          markdown itself carries no classes, keeping the source portable. */}
+          markdown itself carries no classes, which keeps the source portable. */}
       <div className="markdown-content">{content}</div>
 
       {faq.length > 0 ? (

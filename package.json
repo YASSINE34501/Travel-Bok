@@ -10,7 +10,8 @@
     "seed": "node scripts/seed.mjs",
     "typecheck": "tsc --noEmit",
     "check:contrast": "node scripts/check-contrast.mjs",
-    "check:seo": "node scripts/seo-audit.mjs"
+    "check:seo": "node scripts/seo-audit.mjs",
+    "check:i18n": "node scripts/audit-i18n.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

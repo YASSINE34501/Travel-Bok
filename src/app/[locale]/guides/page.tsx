@@ -7,7 +7,7 @@ import { CountryCard } from "@/components/guides/CountryCard";
 import { ArticleCard } from "@/components/guides/ArticleCard";
 import { PhotoCredits } from "@/components/common/PhotoCredits";
 import { getGuides } from "@/lib/queries";
-import { getAllGuideDocs } from "@/lib/guides-md";
+import { getGuideDocsForLocale } from "@/lib/guides-md";
 import { pageMetadata, JsonLd, breadcrumbSchema } from "@/lib/seo";
 import { pageDescription, pageTitle } from "@/lib/seo-content";
 import { keywordsFor } from "@/data/seo";
@@ -47,7 +47,7 @@ export default async function GuidesPage({
     getTranslations("Nav"),
     getTranslations("Articles"),
     getGuides(),
-    getAllGuideDocs(),
+    getGuideDocsForLocale(locale),
   ]);
 
   return (

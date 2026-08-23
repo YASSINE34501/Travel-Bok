@@ -20,10 +20,13 @@ const guides = [
   "gb","ae","sa","qa","kw","om","bh","us","ca","au",
 ];
 
+const articles = ["spain", "germany", "italy", "france"];
+
 const paths = [];
 for (const locale of ["en", "ar"]) {
   paths.push(`/${locale}`, `/${locale}/explorer`, `/${locale}/jobs`, `/${locale}/guides`);
   for (const g of guides) paths.push(`/${locale}/guides/${g}`);
+  for (const a of articles) paths.push(`/${locale}/articles/${a}`);
   paths.push(`/${locale}/about`, `/${locale}/privacy`, `/${locale}/terms`, `/${locale}/contact`);
 }
 
