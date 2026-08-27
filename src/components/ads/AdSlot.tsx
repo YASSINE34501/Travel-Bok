@@ -75,12 +75,23 @@ export function AdSlot({
         {client ? (
           <ins
             className="adsbygoogle block size-full"
-            // The unit fills the reserved box exactly; it cannot push content.
+            /**
+             * Fixed unit, deliberately NOT `data-ad-format="auto"` with
+             * `data-full-width-responsive="true"`.
+             *
+             * Those two make AdSense size the unit at runtime and rewrite the
+             * height of the element *and its container*: measured on a 375px
+             * viewport, a slot declared `h-[100px]` computed to 376.333px once
+             * adsbygoogle.js ran, pushing everything below it down for a CLS of
+             * 0.209 — twice Google's 0.1 threshold. The fixed-height container
+             * was reserving a box the ad then refused to stay inside.
+             *
+             * Without them the unit is served at the size of the box we already
+             * reserved, so the reservation actually holds.
+             */
             style={{ display: "block", width: "100%", height: "100%" }}
             data-ad-client={client}
             data-ad-slot={slot}
-            data-ad-format="auto"
-            data-full-width-responsive="true"
           />
         ) : (
           <span className="text-xs text-ink-muted/60">{slot}</span>
