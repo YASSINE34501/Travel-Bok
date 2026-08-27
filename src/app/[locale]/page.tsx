@@ -73,7 +73,7 @@ export default async function HomePage({
 
         <FeatureRow />
 
-        <AdSlot slot="1234567890" format="leaderboard" />
+        <AdSlot slot="7282850336" format="leaderboard" />
 
         <HowItWorks />
 
@@ -85,7 +85,7 @@ export default async function HomePage({
 
         <JobsPreview jobs={jobs} countries={countries} locale={locale} />
 
-        <AdSlot slot="2233445566" format="inline" />
+        <AdSlot slot="3234909630" format="inline" />
 
         <GuidesPreview guides={guides} countries={countries} locale={locale} />
 

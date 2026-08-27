@@ -91,7 +91,7 @@ export default async function GuidesPage({
         </section>
       ) : null}
 
-      <AdSlot slot="4455667788" format="leaderboard" />
+      <AdSlot slot="6947808415" format="leaderboard" />
 
       <p className="mt-6 text-xs leading-relaxed text-ink-muted">
         {t("disclaimer")}

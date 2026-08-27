@@ -170,7 +170,7 @@ export default async function ArticlePage({
       ) : null}
 
       <div className="mt-10">
-        <AdSlot slot="9900112233" format="rectangle" />
+        <AdSlot slot="8707612642" format="rectangle" />
       </div>
     </article>
   );

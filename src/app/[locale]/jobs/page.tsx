@@ -71,7 +71,7 @@ export default async function JobsPage({
 
       <AdSlot slot="2553267834" format="leaderboard" className="mt-0 mb-8" />
 
-      <DashboardLayout sidebarSlot="8899001122">
+      <DashboardLayout sidebarSlot="8260890083">
         <JobMatcher
         jobs={jobs}
         countries={countries}
@@ -81,7 +81,7 @@ export default async function JobsPage({
 
       <FaqSection faqs={JOBS_FAQS} locale={locale} />
 
-        <AdSlot slot="3344556677" format="inline" />
+        <AdSlot slot="2054574384" format="inline" />
       </DashboardLayout>
 
       <JsonLd

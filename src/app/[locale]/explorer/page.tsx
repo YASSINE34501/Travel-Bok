@@ -66,7 +66,7 @@ export default async function ExplorerPage({
 
       <AdSlot slot="2553267834" format="leaderboard" className="mt-0 mb-8" />
 
-      <DashboardLayout sidebarSlot="7788990011">
+      <DashboardLayout sidebarSlot="7306901062">
         <CostComparer countries={countries} defaultFrom={from} defaultTo={to} />
 
       <DataProvenance
@@ -87,7 +87,7 @@ export default async function ExplorerPage({
 
       <FaqSection faqs={EXPLORER_FAQS} locale={locale} />
 
-        <AdSlot slot="2233445566" format="inline" />
+        <AdSlot slot="4164847922" format="inline" />
       </DashboardLayout>
 
       <JsonLd

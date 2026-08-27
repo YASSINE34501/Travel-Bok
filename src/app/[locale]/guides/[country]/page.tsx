@@ -186,7 +186,7 @@ export default async function GuidePage({
         className="mt-6"
       />
 
-      <AdSlot slot="5566778899" format="inline" />
+      <AdSlot slot="3646857652" format="inline" />
 
       {/* Visa routes */}
       <section id="routes" className="mt-4 scroll-mt-20">
@@ -282,7 +282,7 @@ export default async function GuidePage({
         {t("disclaimer")}
       </p>
 
-      <AdSlot slot="6677889900" format="leaderboard" />
+      <AdSlot slot="1020694315" format="leaderboard" />
 
       <JsonLd
         data={articleSchema({
