@@ -69,7 +69,7 @@ export default async function JobsPage({
         <p className="mt-3 max-w-2xl text-ink-muted">{t("subtitle")}</p>
       </header>
 
-      <AdSlot slot="5566778899" format="leaderboard" className="mt-0 mb-8" />
+      <AdSlot slot="2553267834" format="leaderboard" className="mt-0 mb-8" />
 
       <DashboardLayout sidebarSlot="8899001122">
         <JobMatcher

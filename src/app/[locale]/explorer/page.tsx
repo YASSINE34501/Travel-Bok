@@ -64,7 +64,7 @@ export default async function ExplorerPage({
         <p className="mt-3 max-w-2xl text-ink-muted">{t("subtitle")}</p>
       </header>
 
-      <AdSlot slot="4455667788" format="leaderboard" className="mt-0 mb-8" />
+      <AdSlot slot="2553267834" format="leaderboard" className="mt-0 mb-8" />
 
       <DashboardLayout sidebarSlot="7788990011">
         <CostComparer countries={countries} defaultFrom={from} defaultTo={to} />
