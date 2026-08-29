@@ -12,7 +12,8 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:seo": "node scripts/seo-audit.mjs",
     "check:i18n": "node scripts/audit-i18n.mjs",
-    "check:ads": "node scripts/audit-ads.mjs"
+    "check:ads": "node scripts/audit-ads.mjs",
+    "check:schema": "node scripts/audit-schema.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

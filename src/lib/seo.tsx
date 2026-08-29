@@ -126,22 +126,46 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-export function organizationSchema(locale: Locale) {
+export function organizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
     name: "TRAVLBOK",
-    url: `${SITE_URL}/${locale}`,
+    // The site root, NOT `${SITE_URL}/${locale}`. One @id must describe one
+    // entity identically everywhere: emitting a different `url` on /en than on
+    // /ar gave the same organisation two conflicting definitions, which is
+    // exactly the inconsistency that makes an entity harder to consolidate.
+    url: SITE_URL,
     logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
     description:
-      "Cost of living comparison, degree-to-job matching and visa guides for migrants and expats.",
+      "Data-driven relocation platform comparing cost of living, salaries, in-demand jobs and visa routes across countries, so people can move abroad on numbers rather than guesswork.",
+    /**
+     * The subject areas this entity is actually about. Every term below maps to
+     * a real section of the site — cost of living to /explorer, jobs and
+     * salaries to /jobs, visas and work permits to /guides. It is an entity
+     * signal, not a keyword list, so nothing goes here that the site does not
+     * genuinely cover.
+     */
+    knowsAbout: [
+      "Relocation",
+      "Immigration",
+      "Cost of living",
+      "Visa requirements",
+      "Work permits",
+      "Salaries",
+      "Job markets",
+      "Country comparison",
+    ],
     contactPoint: {
       "@type": "ContactPoint",
       email: "hello@travlbok.com",
       contactType: "customer support",
       availableLanguage: ["en", "ar"],
     },
+    // No `sameAs`: the project has no verified official social profiles, and
+    // pointing an entity at accounts that may not be ours is worse than
+    // declaring none.
   };
 }
 
@@ -150,13 +174,15 @@ export function organizationSchema(locale: Locale) {
  * No SearchAction: there is no site-wide search, and claiming one that does
  * not exist is a fast way to get structured data ignored.
  */
-export function websiteSchema(locale: Locale) {
+export function websiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${SITE_URL}/#website`,
     name: "TRAVLBOK",
-    url: `${SITE_URL}/${locale}`,
+    // Site root for the same reason as the Organization above: one @id, one
+    // definition, identical on every page in both locales.
+    url: SITE_URL,
     inLanguage: locales,
     publisher: { "@id": `${SITE_URL}/#organization` },
   };

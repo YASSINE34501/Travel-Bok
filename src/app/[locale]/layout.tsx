@@ -128,8 +128,8 @@ export default async function LocaleLayout({
           <Footer />
           <ConsentBanner />
         </NextIntlClientProvider>
-        <JsonLd data={organizationSchema(locale)} />
-        <JsonLd data={websiteSchema(locale)} />
+        <JsonLd data={organizationSchema()} />
+        <JsonLd data={websiteSchema()} />
       </body>
     </html>
   );
