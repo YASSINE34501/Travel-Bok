@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { CountrySelect } from "@/components/ui/country-select";
 import { money, percent, t as pick } from "@/lib/format";
+import { coreCost } from "@/lib/compare";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -41,16 +42,8 @@ const CATEGORIES = [
   { key: "meal", icon: UtensilsCrossed, get: (c: Country) => c.cost.mealOut },
 ] as const;
 
-/** Rent + food + bills + transport + internet: the unavoidable monthly floor. */
-function coreCost(c: Country) {
-  return (
-    c.cost.rentCenter +
-    c.cost.groceries +
-    c.cost.utilities +
-    c.cost.transport +
-    c.cost.internet
-  );
-}
+// coreCost lives in @/lib/compare so this tool and the indexable /compare
+// landing pages can never quote different figures for the same pair.
 
 export function CostComparer({
   countries,

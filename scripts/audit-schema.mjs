@@ -33,6 +33,7 @@ for (const locale of ["en", "ar"]) {
     `/${locale}/guides`,
     `/${locale}/guides/de`,
     `/${locale}/articles/spain`,
+    `/${locale}/compare/morocco/germany`,
     `/${locale}/data`,
     `/${locale}/about`,
     `/${locale}/privacy`,
@@ -53,13 +54,31 @@ const warn = (p, m) => warnings.push(`${p} :: ${m}`);
 const entityDefinitions = new Map();
 const rows = [];
 
-for (const path of paths) {
+/**
+ * Retry before reporting a failure.
+ *
+ * A dev server compiles routes on demand, so under a multi-route crawl a page
+ * nobody has hit yet can time out or 500 while it builds — /en/contact did
+ * exactly that here and then returned 200 on three consecutive direct
+ * requests. Reporting that as a structured-data failure trains people to
+ * ignore the gate, so a route only fails after three attempts with backoff.
+ */
+async function fetchPage(path, attempt = 1) {
   const res = await fetch(BASE + path, {
     headers: { "user-agent": "TRAVLBOK-schema-audit" },
     signal: AbortSignal.timeout(45_000),
-  });
-  if (res.status !== 200) {
-    err(path, `HTTP ${res.status}`);
+  }).catch(() => null);
+
+  if (res && res.status === 200) return res;
+  if (attempt >= 3) return res;
+  await new Promise((r) => setTimeout(r, attempt * 2_000));
+  return fetchPage(path, attempt + 1);
+}
+
+for (const path of paths) {
+  const res = await fetchPage(path);
+  if (!res || res.status !== 200) {
+    err(path, `HTTP ${res ? res.status : "fetch failed"} after 3 attempts`);
     continue;
   }
   const html = await res.text();

@@ -33,6 +33,7 @@ const guides = [
   "de", "fr", "es", "it", "nl", "be", "se", "ch", "at", "pt", "pl", "ie",
   "gb", "ae", "sa", "qa", "kw", "om", "bh", "us", "ca", "au",
 ];
+const comparisons = ["morocco/germany","morocco/france","morocco/spain","morocco/portugal","morocco/uae","morocco/saudi-arabia","algeria/france","tunisia/france","egypt/germany","jordan/germany"];
 const articles = ["spain", "germany", "italy", "france"];
 
 const paths = [];
@@ -40,6 +41,7 @@ for (const locale of ["en", "ar"]) {
   paths.push(`/${locale}`, `/${locale}/explorer`, `/${locale}/jobs`, `/${locale}/guides`);
   for (const g of guides) paths.push(`/${locale}/guides/${g}`);
   for (const a of articles) paths.push(`/${locale}/articles/${a}`);
+  for (const c of comparisons) paths.push(`/${locale}/compare/${c}`);
   paths.push(`/${locale}/data`,
     `/${locale}/about`, `/${locale}/privacy`, `/${locale}/terms`, `/${locale}/contact`);
 }
@@ -259,13 +261,33 @@ for (const path of paths.slice(0, 4)) {
   const { html } = await fetchHtml(BASE + path);
   for (const m of html.matchAll(/href="(\/[^"#?]*)"/g)) linkTargets.add(m[1]);
 }
+/**
+ * Retry before declaring a link broken.
+ *
+ * A dev server compiles routes on demand, so while this audit crawls ~90 pages
+ * a HEAD request to a page nobody has hit yet can exceed the timeout and come
+ * back as "fetch failed" for a page that is perfectly healthy — verified by
+ * requesting it directly straight afterwards and getting 200 every time. A
+ * gate that reports phantom failures is one people learn to ignore, so a
+ * target is only broken if it fails three times with backoff.
+ */
+async function linkStatus(target, attempt = 1) {
+  const res = await fetch(BASE + target, {
+    method: "HEAD",
+    signal: AbortSignal.timeout(30_000),
+  }).catch(() => null);
+
+  if (res) return res.status;
+  if (attempt >= 3) return null;
+  await new Promise((r) => setTimeout(r, attempt * 2_000));
+  return linkStatus(target, attempt + 1);
+}
+
 for (const target of linkTargets) {
   if (target.startsWith("/_next") || target === "/") continue;
-  const res = await fetch(BASE + target, { method: "HEAD", signal: AbortSignal.timeout(20_000) }).catch(
-    () => null,
-  );
-  if (!res || res.status >= 400) {
-    errors.push(`internal link :: ${target} -> ${res ? res.status : "fetch failed"}`);
+  const status = await linkStatus(target);
+  if (status === null || status >= 400) {
+    errors.push(`internal link :: ${target} -> ${status ?? "fetch failed after 3 attempts"}`);
   }
 }
 

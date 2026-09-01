@@ -5,6 +5,7 @@ import { COST_DATA_UPDATED } from "@/data/sources";
 import { locales } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/seo";
 import { listGuideDocParams } from "@/lib/guides-md";
+import { pilotSlugPairs } from "@/lib/compare";
 
 type Entry = {
   path: string;
@@ -52,6 +53,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: doc.slug === "about" ? 0.5 : 0.3,
       changeFrequency: "yearly" as const,
       lastModified: new Date(doc.updatedAt),
+    })),
+
+    /**
+     * Comparison landing pages, built from the SAME curated list that
+     * generateStaticParams uses. Deriving both from `pilotSlugPairs()` is what
+     * makes "sitemap says index, page says 404" impossible: adding a pair to
+     * the pilot publishes it in both places at once, and removing it withdraws
+     * it from both.
+     */
+    ...pilotSlugPairs().map((pair) => ({
+      path: `/compare/${pair.from}/${pair.to}`,
+      priority: 0.7,
+      changeFrequency: "monthly" as const,
+      lastModified: new Date(COST_DATA_UPDATED),
     })),
 
     // Trust surface: the consolidated source list. Worth crawling, but it must
