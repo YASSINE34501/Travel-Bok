@@ -79,9 +79,13 @@ export default async function GuidePage({
   const { locale, country } = await params;
   setRequestLocale(locale);
 
-  const [t, nav, guides, countries, jobs] = await Promise.all([
+  const [t, nav, ex, guides, countries, jobs] = await Promise.all([
     getTranslations("Guides"),
     getTranslations("Nav"),
+    // The cost labels are already written and translated for the explorer.
+    // Reusing them keeps one wording for "rent, 1-bedroom (centre)" across the
+    // site instead of a second copy that drifts.
+    getTranslations("Explorer"),
     getGuides(),
     getCountries(),
     getJobs(),
@@ -147,17 +151,28 @@ export default async function GuidePage({
 
       {guide.sections ? <GuideToc /> : null}
 
-      {/* At a glance */}
+      {/*
+        At a glance.
+
+        Each card names the metric before the number. Previously it showed
+        "Berlin" above "$1,300" and "Germany" above "$3,000" — a human infers
+        rent and salary from the icons, but an extractive system reading the
+        HTML sees two unlabelled figures and cannot tell what either measures,
+        which is what kept these pages quotable-in-principle only. The heading
+        is visible for the same reason: it gives the block something to anchor to.
+      */}
       <section className="mt-8">
-        <h2 className="sr-only">{t("atAGlance")}</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
+          {t("atAGlance")}
+        </h2>
+        <div className="mt-3 grid gap-4 sm:grid-cols-3">
           <Card>
             <CardBody className="pt-5">
               <span className="grid size-9 place-items-center rounded-lg bg-brand-50 text-brand-700">
                 <Wallet aria-hidden className="size-4" />
               </span>
               <p className="mt-3 text-xs text-ink-muted">
-                {pick(destination.cost.city, locale)}
+                {ex("rent")} — {pick(destination.cost.city, locale)}
               </p>
               <p className="tnum text-lg font-semibold text-ink">
                 {money(destination.cost.rentCenter, locale)}
@@ -170,7 +185,7 @@ export default async function GuidePage({
                 <Coins aria-hidden className="size-4" />
               </span>
               <p className="mt-3 text-xs text-ink-muted">
-                {pick(destination.name, locale)}
+                {ex("avgSalary")} — {pick(destination.name, locale)}
               </p>
               <p className="tnum text-lg font-semibold text-ink">
                 {money(destination.cost.avgNetSalary, locale)}
@@ -182,7 +197,11 @@ export default async function GuidePage({
               <span className="grid size-9 place-items-center rounded-lg bg-brand-50 text-brand-700">
                 <CalendarClock aria-hidden className="size-4" />
               </span>
-              <p className="mt-3 text-xs text-ink-muted">{t("processing")}</p>
+              {/* Names the route the figure belongs to: "4–8 weeks" is
+                  meaningless without knowing which permit it measures. */}
+              <p className="mt-3 text-xs text-ink-muted">
+                {t("processing")} — {pick(guide.routes[0].name, locale)}
+              </p>
               <p className="text-lg font-semibold text-ink">
                 {pick(guide.routes[0].processing, locale)}
               </p>
