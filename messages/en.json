@@ -162,6 +162,37 @@
     "relatedCountries": "Other guides in {region}",
     "relatedCountriesBody": "Compare visa routes and living costs across the region."
   },
+  "Data": {
+    "title": "Data & sources behind every TRAVLBOK figure",
+    "subtitle": "Every source behind TRAVLBOK: 4 cost-of-living datasets, 13 official immigration authorities, what each figure measures and what the numbers leave out.",
+    "reviewed": "Cost dataset last reviewed end to end on {date}.",
+    "coverage": "Coverage",
+    "coverageBody": "Counted from the live dataset at build time, so this table cannot drift from what the site actually serves.",
+    "countries": "Countries with cost data",
+    "destinations": "Destinations with a visa guide",
+    "guidesCount": "Visa guides published",
+    "jobsCount": "Job roles listed",
+    "jobCountries": "Countries with job data",
+    "measured": "What we measure",
+    "measuredBody": "Every cost figure is a monthly average for the country capital or largest city, expressed in US dollars so countries stay directly comparable.",
+    "costSources": "Cost-of-living sources",
+    "officialSources": "Official immigration authorities",
+    "officialSourcesBody": "Linked from each country guide. These are authoritative on fees and processing times; our figures are a snapshot taken at the review date.",
+    "limits": "Limitations",
+    "limitsIntro": "Stated plainly, because a number without its caveats is worse than no number:",
+    "limitNotAdvice": "TRAVLBOK is not an immigration adviser and has no government affiliation. Nothing here is legal advice.",
+    "limitEstimates": "Cost figures are estimates for shortlisting, not quotes. Prices vary by neighbourhood, season and household.",
+    "limitChange": "Visa rules, fees, salary thresholds and quotas change. Always confirm against the official authority before acting.",
+    "limitJobs": "Job data covers {jobCountries} of {destinations} destinations. Guides without job data show no roles rather than an empty list.",
+    "limitAuthorities": "{withAuthority} of {destinations} guides link a mapped official authority. The rest cite sources inline instead.",
+    "approach": "How we compile the numbers is explained on the About page.",
+    "keywords": [
+      "travlbok data sources",
+      "cost of living data methodology",
+      "immigration data sources",
+      "official immigration authorities list"
+    ]
+  },
   "Articles": {
     "sectionTitle": "Updated 2026 immigration articles",
     "sectionSubtitle": "Long-form analysis of the newest legal routes, with current thresholds and per-country applicant requirements.",

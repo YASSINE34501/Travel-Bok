@@ -27,7 +27,7 @@ for (const locale of ["en", "ar"]) {
   paths.push(`/${locale}`, `/${locale}/explorer`, `/${locale}/jobs`, `/${locale}/guides`);
   for (const g of guides) paths.push(`/${locale}/guides/${g}`);
   for (const a of articles) paths.push(`/${locale}/articles/${a}`);
-  paths.push(`/${locale}/about`, `/${locale}/privacy`, `/${locale}/terms`, `/${locale}/contact`);
+  paths.push(`/${locale}/data`, `/${locale}/about`, `/${locale}/privacy`, `/${locale}/terms`, `/${locale}/contact`);
 }
 
 const strip = (s) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();

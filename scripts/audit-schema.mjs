@@ -33,6 +33,7 @@ for (const locale of ["en", "ar"]) {
     `/${locale}/guides`,
     `/${locale}/guides/de`,
     `/${locale}/articles/spain`,
+    `/${locale}/data`,
     `/${locale}/about`,
     `/${locale}/privacy`,
     `/${locale}/terms`,

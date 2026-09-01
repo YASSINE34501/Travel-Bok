@@ -6,11 +6,12 @@ import { getGuideDocsForLocale } from "@/lib/guides-md";
 import type { Locale } from "@/i18n/routing";
 
 export async function Footer() {
-  const [t, nav, meta, articles, locale] = await Promise.all([
+  const [t, nav, meta, articles, dataT, locale] = await Promise.all([
     getTranslations("Footer"),
     getTranslations("Nav"),
     getTranslations("Meta"),
     getTranslations("Articles"),
+    getTranslations("Data"),
     getLocale() as Promise<Locale>,
   ]);
 
@@ -35,6 +36,7 @@ export async function Footer() {
             <li><Link href="/jobs" className="hover:text-brand-700">{nav("jobs")}</Link></li>
             <li><Link href="/guides" className="hover:text-brand-700">{nav("guides")}</Link></li>
             <li><Link href="/about" className="hover:text-brand-700">{t("about")}</Link></li>
+            <li><Link href="/data" className="hover:text-brand-700">{dataT("title")}</Link></li>
           </ul>
         </div>
 

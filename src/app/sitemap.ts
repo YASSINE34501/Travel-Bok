@@ -54,6 +54,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(doc.updatedAt),
     })),
 
+    // Trust surface: the consolidated source list. Worth crawling, but it must
+    // never outrank the tools and guides it documents.
+    {
+      path: "/data",
+      priority: 0.6,
+      changeFrequency: "monthly",
+      lastModified: new Date(COST_DATA_UPDATED),
+    },
+
     { path: "/contact", priority: 0.5, changeFrequency: "yearly", lastModified: now },
   ];
 
