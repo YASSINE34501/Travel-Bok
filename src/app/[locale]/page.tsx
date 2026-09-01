@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-import type { Locale } from "@/i18n/routing";
+import { routing, type Locale } from "@/i18n/routing";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { Hero } from "@/components/home/Hero";
 import {
@@ -49,6 +51,16 @@ export default async function HomePage({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
+
+  // An unprefixed URL like /nope or /fr matches this segment with
+  // locale="nope". The layout guards the same way, but this component reads
+  // locale-keyed copy (pageTitle) while rendering, and that lookup throws
+  // "candidates is not iterable" before the layout's own guard can answer —
+  // which Next serves as a 500. A missing page must answer 404, not "the
+  // server is broken": Google retries a 5xx and slows the whole crawl,
+  // whereas it simply drops a 404.
+  if (!hasLocale(routing.locales, locale)) notFound();
+
   setRequestLocale(locale);
 
   const [countries, guides, jobs] = await Promise.all([
