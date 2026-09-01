@@ -15,7 +15,7 @@ import {
   Stats,
 } from "@/components/home/Sections";
 import { getCountries, getGuides, getJobs } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, JsonLd, webPageSchema } from "@/lib/seo";
 import { pageDescription, pageTitle, withBrand } from "@/lib/seo-content";
 import { keywordsFor } from "@/data/seo";
 
@@ -66,6 +66,22 @@ export default async function HomePage({
 
   return (
     <>
+      {/*
+        The entity's front door was the one page carrying no page-level schema
+        at all: the layout declares the Organization and the WebSite, but
+        nothing tied this URL to either. No dateModified — the home page
+        aggregates three datasets with different review dates, and picking the
+        most flattering one would be a freshness claim nothing backs.
+      */}
+      <JsonLd
+        data={webPageSchema({
+          name: pageTitle("home", locale),
+          description: pageDescription("home", locale),
+          path: "",
+          locale,
+        })}
+      />
+
       <Hero source={source} destination={destination} locale={locale} />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">

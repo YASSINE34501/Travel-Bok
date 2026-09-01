@@ -16,7 +16,10 @@
  *     manual action
  *   - Article schema only on real article pages, with a parseable date
  *   - BreadcrumbList positions sequential from 1
- *   - Dataset only where a dataset actually exists (currently nowhere)
+ *   - Dataset only on /data, and only with the properties that page can
+ *     honestly support — never a licence, a download or a version
+ *   - WebPage resolves to the Organization and WebSite actually emitted, so a
+ *     page cannot declare itself part of a site that is not there
  *
  * Run the dev or start server first, then: npm run check:schema
  *
@@ -91,7 +94,10 @@ for (const path of paths) {
   let orgCount = 0;
   let siteCount = 0;
   let orgId = null;
+  let siteId = null;
   let publisherRef = null;
+  /** Checked after the loop: JSON-LD order does not guarantee Organization first. */
+  const webPageRefs = [];
 
   for (const [, raw] of blocks) {
     let node;
@@ -127,7 +133,18 @@ for (const path of paths) {
 
     if (type === "WebSite") {
       siteCount++;
+      siteId = node["@id"];
       publisherRef = node.publisher?.["@id"] ?? null;
+    }
+
+    if (type === "WebPage") {
+      for (const field of ["name", "description", "url", "inLanguage"]) {
+        if (!node[field]) err(path, `WebPage missing ${field}`);
+      }
+      webPageRefs.push({
+        isPartOf: node.isPartOf?.["@id"] ?? null,
+        publisher: node.publisher?.["@id"] ?? null,
+      });
     }
 
     if (type === "Article") {
@@ -154,7 +171,23 @@ for (const path of paths) {
     }
 
     if (type === "Dataset") {
-      err(path, "Dataset schema present — no page currently publishes a real dataset");
+      // /data is the one page that describes a dataset. Anywhere else this is
+      // a page claiming to be something it is not.
+      if (!path.endsWith("/data")) {
+        err(path, "Dataset schema on a page that publishes no dataset");
+      }
+      for (const field of ["name", "description", "dateModified", "variableMeasured"]) {
+        if (!node[field]) err(path, `Dataset missing ${field}`);
+      }
+      if (node.dateModified && Number.isNaN(Date.parse(node.dateModified))) {
+        err(path, `Dataset dateModified is not parseable: "${node.dateModified}"`);
+      }
+      // TRAVLBOK declares no licence, ships no download and keeps no version
+      // history. Advertising any of them would send a crawler after something
+      // that does not exist.
+      for (const bad of ["license", "distribution", "downloadURL", "version", "temporalCoverage"]) {
+        if (node[bad]) err(path, `Dataset declares ${bad} — the site publishes no such thing`);
+      }
     }
 
     // Entity consistency: the same @id must serialise identically everywhere.
@@ -176,6 +209,14 @@ for (const path of paths) {
   if (siteCount !== 1) err(path, `expected exactly 1 WebSite, found ${siteCount}`);
   if (publisherRef && orgId && publisherRef !== orgId) {
     err(path, `WebSite.publisher "${publisherRef}" does not match the Organization @id "${orgId}"`);
+  }
+  for (const ref of webPageRefs) {
+    if (ref.isPartOf !== siteId) {
+      err(path, `WebPage.isPartOf "${ref.isPartOf}" does not match the WebSite @id "${siteId}"`);
+    }
+    if (ref.publisher !== orgId) {
+      err(path, `WebPage.publisher "${ref.publisher}" does not match the Organization @id "${orgId}"`);
+    }
   }
 
   rows.push({ path, blocks: blocks.length, types: types.join("+") });

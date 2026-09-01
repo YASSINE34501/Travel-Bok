@@ -11,6 +11,8 @@ import { pageDescription, pageTitle } from "@/lib/seo-content";
 import { keywordsFor } from "@/data/seo";
 import { FaqSection } from "@/components/common/FaqSection";
 import { JOBS_FAQS } from "@/data/faqs";
+import { JOBS_DATA_UPDATED } from "@/data/sources";
+import { formatDate } from "@/lib/format";
 
 // 12 hours. Must be a literal: Next statically analyses this export.
 export const revalidate = 43200;
@@ -67,6 +69,12 @@ export default async function JobsPage({
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-ink sm:text-4xl">{t("title")}</h1>
         <p className="mt-3 max-w-2xl text-ink-muted">{t("subtitle")}</p>
+        {/* Every other substantial page states when its data was reviewed;
+            this one did not, which made the demand and salary figures look
+            undated. The date is the real one, not the render time. */}
+        <p className="mt-3 text-xs text-ink-muted">
+          {t("reviewed", { date: formatDate(JOBS_DATA_UPDATED, locale) })}
+        </p>
       </header>
 
       <AdSlot slot="2553267834" format="leaderboard" className="mt-0 mb-8" />

@@ -246,3 +246,98 @@ export function articleSchema({
     },
   };
 }
+
+/**
+ * The page itself, tied to the site and the publisher.
+ *
+ * This is purely a relationship node: it references the Organization and the
+ * WebSite by @id instead of restating them, so a page still carries exactly one
+ * definition of each entity. Without it the individual URLs are orphans — an
+ * engine can see the site and it can see the article, but nothing states that
+ * this page belongs to that site.
+ *
+ * `dateModified` is optional on purpose. Pass it only where the underlying data
+ * carries a real review date; a freshness claim the dataset cannot support is
+ * the kind of thing that gets structured data distrusted wholesale.
+ */
+export function webPageSchema({
+  name,
+  description,
+  path,
+  locale,
+  updatedAt,
+}: {
+  name: string;
+  description: string;
+  path: string;
+  locale: Locale;
+  updatedAt?: string;
+}) {
+  const url = `${SITE_URL}/${locale}${path === "/" ? "" : path}`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name,
+    description,
+    inLanguage: locale,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    ...(updatedAt ? { dateModified: updatedAt } : {}),
+  };
+}
+
+/**
+ * Describes a dataset the site genuinely publishes.
+ *
+ * Every property maps to something visible on /data: `variableMeasured` uses
+ * the same labels the page renders, `isBasedOn` is the same source list, and
+ * `dateModified` is the real end-to-end review date.
+ *
+ * Deliberately absent: `license`, `distribution`/`downloadURL`, `version` and
+ * `temporalCoverage`. TRAVLBOK declares no licence, ships no download and keeps
+ * no version history — and a Dataset advertising a file nobody can fetch is
+ * worse than publishing no Dataset at all.
+ */
+export function datasetSchema({
+  name,
+  description,
+  path,
+  locale,
+  updatedAt,
+  variableMeasured,
+  isBasedOn,
+}: {
+  name: string;
+  description: string;
+  path: string;
+  locale: Locale;
+  updatedAt: string;
+  /** The fields the dataset actually records, in the page's own wording. */
+  variableMeasured: string[];
+  /** URLs of the upstream sources the compilation is built from. */
+  isBasedOn: string[];
+}) {
+  const url = `${SITE_URL}/${locale}${path}`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "@id": `${url}#dataset`,
+    url,
+    name,
+    description,
+    inLanguage: locale,
+    dateModified: updatedAt,
+    // Free to read on the web, with no paywall and no sign-in — the one access
+    // claim this site can make truthfully.
+    isAccessibleForFree: true,
+    variableMeasured,
+    isBasedOn,
+    creator: { "@id": `${SITE_URL}/#organization` },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+  };
+}

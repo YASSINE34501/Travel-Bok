@@ -12,7 +12,12 @@ import {
 } from "@/data/sources";
 import { getCountries, getGuides, getJobs } from "@/lib/queries";
 import { t as pick, formatDate } from "@/lib/format";
-import { pageMetadata, JsonLd, breadcrumbSchema } from "@/lib/seo";
+import {
+  pageMetadata,
+  JsonLd,
+  breadcrumbSchema,
+  datasetSchema,
+} from "@/lib/seo";
 
 // 12 hours. Must be a literal: Next statically analyses this export, and an
 // imported constant fails the build with "Invalid segment configuration export".
@@ -104,6 +109,25 @@ export default async function DataPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
+      {/*
+        The only page on the site that describes a dataset, so the only page
+        that may claim one. Every property is drawn from what is rendered
+        below — the measured variables are the same chips, the sources are the
+        same list, the date is the same review date in the header — because
+        Dataset markup describing fields a reader cannot see is a violation
+        rather than an optimisation.
+      */}
+      <JsonLd
+        data={datasetSchema({
+          name: t("title"),
+          description: t("subtitle"),
+          path: "/data",
+          locale,
+          updatedAt: COST_DATA_UPDATED,
+          variableMeasured: categories.map((key) => ex(key)),
+          isBasedOn: COST_SOURCES.map((source) => source.url),
+        })}
+      />
       <JsonLd
         data={breadcrumbSchema(
           [

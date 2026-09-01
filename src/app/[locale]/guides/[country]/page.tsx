@@ -23,6 +23,8 @@ import {
 } from "@/lib/queries";
 import { t as pick, formatDate, money } from "@/lib/format";
 import { guideKeywords, keywordsFor } from "@/data/seo";
+import { COUNTRY_SLUGS, PILOT_PAIRS } from "@/lib/compare";
+import { getOfficialSource } from "@/data/sources";
 import { guideDescription, guideTitle } from "@/lib/seo-content";
 import {
   pageMetadata,
@@ -117,6 +119,54 @@ export default async function GuidePage({
     )
     .slice(0, 4);
 
+  /**
+   * Comparison pages that end at this country.
+   *
+   * Read straight off PILOT_PAIRS — the same curated list that gates
+   * generateStaticParams and the sitemap — so a guide can only ever link to a
+   * comparison that is actually built. Deriving the pairs here instead would
+   * let this section drift into 404s the moment the pilot changes. Countries
+   * outside the pilot render no section rather than an empty one.
+   */
+  const comparisons = PILOT_PAIRS.filter((p) => p.to === country).flatMap(
+    (pair) => {
+      const origin = countries.find((c) => c.code === pair.from);
+      return origin ? [{ pair, origin }] : [];
+    },
+  );
+
+  /**
+   * The direct answer.
+   *
+   * Every guide reached the same shape of question — how do I get in, what
+   * does it cost, who decides — but a reader (or an extractive system) had to
+   * assemble that from three separate blocks further down the page. This states
+   * it once, in one paragraph, from the guide's own fields: the route count,
+   * the primary route and its processing time, this country's rent and salary
+   * figures, and the review date already printed above.
+   *
+   * Nothing here is written per country, and nothing is invented. The only
+   * branch is the closing clause: 13 of the 22 destinations have a named
+   * official authority in the dataset and 9 do not, so the ones that do name it
+   * and the ones that do not point at the authority generically rather than
+   * inventing a plausible department.
+   */
+  const authority = getOfficialSource(country);
+  const quickAnswer = t(
+    authority ? "quickAnswerWithAuthority" : "quickAnswerNoAuthority",
+    {
+      country: pick(destination.name, locale),
+      routes: guide.routes.length,
+      route: pick(guide.routes[0].name, locale),
+      processing: pick(guide.routes[0].processing, locale),
+      city: pick(destination.cost.city, locale),
+      rent: money(destination.cost.rentCenter, locale),
+      salary: money(destination.cost.avgNetSalary, locale),
+      date: formatDate(guide.updatedAt, locale),
+      authority: authority?.name ?? "",
+    },
+  );
+
   const title = pick(guide.title, locale);
 
   return (
@@ -141,6 +191,13 @@ export default async function GuidePage({
           {pick(guide.summary, locale)}
         </p>
       </header>
+
+      <section className="mt-8 rounded-card border border-brand-100 bg-brand-50 p-6">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-brand-700">
+          {t("quickAnswer")}
+        </h2>
+        <p className="mt-2 text-lg leading-relaxed text-ink">{quickAnswer}</p>
+      </section>
 
       <CountryImage
         countryCode={country}
@@ -318,6 +375,42 @@ export default async function GuidePage({
           </Button>
         </Link>
       </section>
+
+      {comparisons.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold text-ink">
+            {t("compareTitle", { country: pick(destination.name, locale) })}
+          </h2>
+          <p className="mt-2 leading-relaxed text-ink-muted">
+            {t("compareBody", { country: pick(destination.name, locale) })}
+          </p>
+
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {comparisons.map(({ pair, origin }) => (
+              <li key={`${pair.from}-${pair.to}`}>
+                <Link
+                  href={`/compare/${COUNTRY_SLUGS[pair.from]}/${COUNTRY_SLUGS[pair.to]}`}
+                  className="lift flex items-center gap-3 rounded-card border border-line bg-surface p-4"
+                >
+                  <Flag code={pair.from} className="size-6 shrink-0 rounded-sm" />
+                  <ArrowRight
+                    aria-hidden
+                    className="size-3.5 shrink-0 text-ink-muted flip-rtl"
+                  />
+                  <Flag code={pair.to} className="size-6 shrink-0 rounded-sm" />
+                  {/* Anchor text is the target page's own H1, not "compare". */}
+                  <span className="ms-1 min-w-0 font-medium text-ink">
+                    {t("compareItem", {
+                      to: pick(destination.name, locale),
+                      from: pick(origin.name, locale),
+                    })}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {relatedCountries.length > 0 ? (
         <section className="mt-10">

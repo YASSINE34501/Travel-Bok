@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { Flag } from "@/components/ui/flag";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { FaqList } from "@/components/common/FaqList";
 import { getCountries, getGuides } from "@/lib/queries";
 import { COST_DATA_UPDATED } from "@/data/sources";
 import { t as pick, money, formatDate } from "@/lib/format";
@@ -19,7 +20,7 @@ import {
   PILOT_PAIRS,
   pilotSlugPairs,
 } from "@/lib/compare";
-import { pageMetadata, JsonLd, breadcrumbSchema } from "@/lib/seo";
+import { pageMetadata, JsonLd, breadcrumbSchema, webPageSchema } from "@/lib/seo";
 import { fitDescription } from "@/lib/seo-content";
 
 // 12 hours. Must be a literal: Next statically analyses this export.
@@ -161,8 +162,102 @@ export default async function ComparePage({ params }: { params: Params }) {
 
   const heading = t("h1", { from: fromName, to: toName, year });
 
+  // Built once, used twice: rendered as the quick answer and reused as the
+  // WebPage description. Two copies of this sentence would eventually disagree.
+  const quickAnswer = t(data.destinationPricier ? "quickPricier" : "quickCheaper", {
+    from: fromName,
+    to: toName,
+    percent: Math.abs(data.corePercent),
+    toCost: money(data.toCore, locale),
+    fromCost: money(data.fromCore, locale),
+    toCity,
+    fromCity,
+  });
+
+  /**
+   * FAQ entries derived from this corridor's own figures.
+   *
+   * Every answer interpolates a computed value, so no two of the ten pages ship
+   * the same text. A block of identical questions repeated across a
+   * programmatic set is boilerplate, and marking boilerplate up as an FAQPage
+   * is how the rich result gets withdrawn rather than earned. The visa question
+   * appears only when a guide for the destination exists to back the route
+   * count — the number has to come from somewhere real.
+   */
+  const faqs = [
+    {
+      question: t(
+        data.destinationPricier ? "faqCostQPricier" : "faqCostQCheaper",
+        { from: fromName, to: toName },
+      ),
+      answer: t(
+        data.destinationPricier ? "faqCostAPricier" : "faqCostACheaper",
+        {
+          to: toName,
+          percent: Math.abs(data.corePercent),
+          toCost: money(data.toCore, locale),
+          fromCost: money(data.fromCore, locale),
+          toCity,
+          fromCity,
+        },
+      ),
+    },
+    {
+      question: t("faqBudgetQ", { to: toName }),
+      answer: t("faqBudgetA", { toCost: money(data.toCore, locale), toCity }),
+    },
+    {
+      question: t("faqSalaryQ", { to: toName }),
+      answer: t("faqSalaryA", {
+        from: fromName,
+        to: toName,
+        toSalary: money(destination.cost.avgNetSalary, locale),
+        toCost: money(data.toCore, locale),
+        ratio: data.toSalaryRatio.toFixed(1),
+        fromRatio: data.fromSalaryRatio.toFixed(1),
+      }),
+    },
+    {
+      question: t("faqGapQ", { from: fromName, to: toName }),
+      answer: t("faqGapA", {
+        category: ex(data.biggestGap.key),
+        fromValue: money(data.biggestGap.from, locale),
+        toValue: money(data.biggestGap.to, locale),
+        fromCity,
+        toCity,
+      }),
+    },
+    ...(destinationGuide
+      ? [
+          {
+            question: t("faqVisaQ", { from: fromName, to: toName }),
+            answer: t("faqVisaA", {
+              to: toName,
+              routes: destinationGuide.routes.length,
+            }),
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
+      {/*
+        The page as an entity, pointing at the WebSite and the Organization by
+        @id rather than restating either. Comparison pages are the site's most
+        extractable content and were the least described: an engine could read
+        the numbers but nothing said whose page they were on. dateModified is
+        the real cost-data review date printed under the H1, not a build time.
+      */}
+      <JsonLd
+        data={webPageSchema({
+          name: heading,
+          description: quickAnswer,
+          path: `/compare/${from}/${to}`,
+          locale,
+          updatedAt: COST_DATA_UPDATED,
+        })}
+      />
       <JsonLd
         data={breadcrumbSchema(
           [
@@ -192,17 +287,7 @@ export default async function ComparePage({ params }: { params: Params }) {
         <h2 className="text-sm font-semibold uppercase tracking-wide text-brand-700">
           {t("quickAnswer")}
         </h2>
-        <p className="mt-2 text-lg leading-relaxed text-ink">
-          {t(data.destinationPricier ? "quickPricier" : "quickCheaper", {
-            from: fromName,
-            to: toName,
-            percent: Math.abs(data.corePercent),
-            toCost: money(data.toCore, locale),
-            fromCost: money(data.fromCore, locale),
-            toCity,
-            fromCity,
-          })}
-        </p>
+        <p className="mt-2 text-lg leading-relaxed text-ink">{quickAnswer}</p>
       </section>
 
       <section className="mt-10">
@@ -375,6 +460,12 @@ export default async function ComparePage({ params }: { params: Params }) {
           </ul>
         </section>
       ) : null}
+
+      <FaqList
+        title={t("faqTitle", { from: fromName, to: toName })}
+        items={faqs}
+        className="mt-10"
+      />
 
       <section className="mt-10 rounded-card border border-line bg-paper p-5">
         <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-muted">

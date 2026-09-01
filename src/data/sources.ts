@@ -121,3 +121,14 @@ export function getOfficialSource(countryCode: string): DataSource | undefined {
 
 /** When the cost-of-living dataset was last reviewed end to end. */
 export const COST_DATA_UPDATED = "2026-08-20";
+
+/**
+ * When the job dataset was last reviewed end to end.
+ *
+ * Not a guess and not the build date: it is the date the file that holds these
+ * records was last edited, which git confirms is the same sweep that produced
+ * COST_DATA_UPDATED. /jobs was the only major page carrying no freshness signal
+ * at all, and the honest fix was to surface the real date rather than invent a
+ * more flattering one. Move this the day the records actually change.
+ */
+export const JOBS_DATA_UPDATED = "2026-08-20";

@@ -165,7 +165,20 @@
     "descTail7": "2026 data.",
     "descTail3b": "A full monthly breakdown, side by side.",
     "descTail3c": "Monthly figures compared.",
-    "descTail3d": "Full monthly breakdown."
+    "descTail3d": "Full monthly breakdown.",
+    "faqTitle": "Common questions about moving from {from} to {to}",
+    "faqCostQPricier": "How much more expensive is {to} than {from}?",
+    "faqCostQCheaper": "How much cheaper is {to} than {from}?",
+    "faqCostAPricier": "Essentials cost about {percent}% more in {to}. One person needs roughly {toCost} a month in {toCity} against {fromCost} in {fromCity}, covering rent in the city centre, groceries, utilities, a transport pass and internet.",
+    "faqCostACheaper": "Essentials cost about {percent}% less in {to}. One person needs roughly {toCost} a month in {toCity} against {fromCost} in {fromCity}, covering rent in the city centre, groceries, utilities, a transport pass and internet.",
+    "faqBudgetQ": "What is the estimated monthly budget in {to}?",
+    "faqBudgetA": "About {toCost} a month for one person in {toCity}. That is rent for a one-bedroom in the city centre plus groceries, utilities, a public transport pass and internet. It excludes eating out, healthcare, childcare and one-off moving costs.",
+    "faqSalaryQ": "Does an average salary in {to} cover the essentials?",
+    "faqSalaryA": "An average net salary in {to} is {toSalary} a month and covers the {toCost} essential budget about {ratio} times over. In {from} the same ratio is about {fromRatio}. That comparison, not the price gap alone, is what decides whether the move improves your monthly margin.",
+    "faqGapQ": "What is the biggest cost difference between {from} and {to}?",
+    "faqGapA": "{category}: {fromValue} in {fromCity} against {toValue} in {toCity}. It is the single largest gap in the breakdown above, so it is the line to check first against real listings.",
+    "faqVisaQ": "What visa do I need to move from {from} to {to}?",
+    "faqVisaA": "{to} publishes {routes} main routes for work or residence, with requirements and processing times set out in the {to} guide. TRAVLBOK is not an immigration adviser, so confirm your eligibility with the official authority before acting."
   },
   "Jobs": {
     "title": "Job & degree matcher",
@@ -188,7 +201,8 @@
     "minEducation": "Minimum education",
     "empty": "Nothing matches those filters yet. Try widening the field or removing the country.",
     "reset": "Clear filters",
-    "viewGuide": "Visa guide for {country}"
+    "viewGuide": "Visa guide for {country}",
+    "reviewed": "Job market data last reviewed {date}."
   },
   "Guides": {
     "title": "Immigration & visa guides",
@@ -206,7 +220,13 @@
     "backToGuides": "All guides",
     "disclaimer": "This is general information, not legal advice. Always confirm details with the official immigration authority before applying.",
     "relatedCountries": "Other guides in {region}",
-    "relatedCountriesBody": "Compare visa routes and living costs across the region."
+    "relatedCountriesBody": "Compare visa routes and living costs across the region.",
+    "compareTitle": "Moving to {country}: cost comparisons",
+    "compareBody": "How the cost of living in {country} compares with the countries people most often move from.",
+    "compareItem": "Cost of living in {to} vs {from}",
+    "quickAnswer": "Quick answer",
+    "quickAnswerWithAuthority": "This guide covers {routes} main routes into {country} for work or residence. The primary one is the {route} route, with a processing time of {processing}. A one-bedroom in central {city} costs about {rent} a month, against an average net salary of {salary}. The requirements, fees and timings below are a snapshot reviewed on {date} — {authority} is the authority that decides.",
+    "quickAnswerNoAuthority": "This guide covers {routes} main routes into {country} for work or residence. The primary one is the {route} route, with a processing time of {processing}. A one-bedroom in central {city} costs about {rent} a month, against an average net salary of {salary}. The requirements, fees and timings below are a snapshot reviewed on {date}; confirm each one with the official immigration authority for {country} before acting."
   },
   "Data": {
     "title": "Data & sources behind every TRAVLBOK figure",
