@@ -95,6 +95,24 @@ export default async function GuidePage({
     .filter((j) => j.countryCode === country && j.demand === "high")
     .slice(0, 5);
 
+  /**
+   * Sibling guides in the same region.
+   *
+   * Before this, a country guide linked "down" into its own cost and jobs
+   * pages but never sideways, so the 22 guides were 22 leaves hanging off one
+   * index with no relationship between them. Region is the honest grouping we
+   * already store — it needs no new data and no editorial judgement — and it
+   * matches how people actually shortlist: they compare neighbours.
+   */
+  const relatedCountries = countries
+    .filter(
+      (c) =>
+        c.code !== country &&
+        c.region.en === destination.region.en &&
+        guides.some((g) => g.countryCode === c.code),
+    )
+    .slice(0, 4);
+
   const title = pick(guide.title, locale);
 
   return (
@@ -258,9 +276,13 @@ export default async function GuidePage({
               </li>
             ))}
           </ul>
-          <Link href="/jobs" className="mt-4 inline-block">
+          {/* Country-scoped, not the generic /jobs index: the heading above
+              promises jobs *here*, and a link that drops the filter breaks
+              that promise for the reader and tells search engines nothing
+              about which country this page belongs to. */}
+          <Link href={`/jobs?country=${country}`} className="mt-4 inline-block">
             <Button variant="secondary" size="sm">
-              {nav("jobs")}
+              {t("relatedJobs")}
               <ArrowRight aria-hidden className="flip-rtl" />
             </Button>
           </Link>
@@ -277,6 +299,38 @@ export default async function GuidePage({
           </Button>
         </Link>
       </section>
+
+      {relatedCountries.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
+            {t("relatedCountries", { region: pick(destination.region, locale) })}
+          </h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            {t("relatedCountriesBody")}
+          </p>
+
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+            {relatedCountries.map((c) => (
+              <li key={c.code}>
+                {/* Anchor text names the destination — no "read more". */}
+                <Link
+                  href={`/guides/${c.code}`}
+                  className="lift flex items-center gap-3 rounded-card border border-line bg-surface p-4"
+                >
+                  <Flag code={c.code} className="size-6 shrink-0 rounded-sm" />
+                  <span className="min-w-0 font-medium text-ink">
+                    {pick(c.name, locale)}
+                  </span>
+                  <ArrowRight
+                    aria-hidden
+                    className="ms-auto size-4 shrink-0 text-brand-700 flip-rtl"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <p className="mt-8 text-xs leading-relaxed text-ink-muted">
         {t("disclaimer")}

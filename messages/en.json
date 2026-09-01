@@ -158,7 +158,9 @@
     "compareCta": "Compare living costs with your country",
     "notFound": "We haven't published this guide yet.",
     "backToGuides": "All guides",
-    "disclaimer": "This is general information, not legal advice. Always confirm details with the official immigration authority before applying."
+    "disclaimer": "This is general information, not legal advice. Always confirm details with the official immigration authority before applying.",
+    "relatedCountries": "Other guides in {region}",
+    "relatedCountriesBody": "Compare visa routes and living costs across the region."
   },
   "Articles": {
     "sectionTitle": "Updated 2026 immigration articles",
