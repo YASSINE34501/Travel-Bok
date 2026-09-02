@@ -182,6 +182,25 @@ export default async function DataPage({
         </ul>
       </section>
 
+      {/*
+        The two figures the comparison pages lead with are derived, not read
+        from a source, so they are the two this page most needs to define. Both
+        definitions mirror src/lib/compare.ts — coreCost and toSalaryRatio — and
+        are stated in words rather than recomputed here, so there is only ever
+        one implementation of either.
+      */}
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold text-ink">{t("derivedTitle")}</h2>
+
+        <h3 className="mt-5 text-lg font-semibold text-ink">
+          {t("budgetTitle")}
+        </h3>
+        <p className="mt-2 leading-relaxed text-ink-muted">{t("budgetBody")}</p>
+
+        <h3 className="mt-5 text-lg font-semibold text-ink">{t("ratioTitle")}</h3>
+        <p className="mt-2 leading-relaxed text-ink-muted">{t("ratioBody")}</p>
+      </section>
+
       <section className="mt-10">
         <h2 className="text-2xl font-bold text-ink">{t("costSources")}</h2>
         <ul className="mt-4 space-y-3">

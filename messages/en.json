@@ -300,7 +300,12 @@
       "cost of living data methodology",
       "immigration data sources",
       "official immigration authorities list"
-    ]
+    ],
+    "derivedTitle": "How the derived figures are calculated",
+    "budgetTitle": "Essential monthly budget",
+    "budgetBody": "The essential monthly budget is the sum of five figures listed above: rent for a one-bedroom in the city centre, groceries, utilities, a public transport pass and internet. It is the monthly floor for one person — the costs that arrive whether or not anything else happens. It does not include eating out, health insurance, childcare or tax.",
+    "ratioTitle": "Salary-to-cost ratio",
+    "ratioBody": "The salary-to-cost ratio divides a country's average net salary by that same country's essential monthly budget. A ratio of 1.0× means the average net salary equals the essential monthly budget; below 1.0× means it is lower than that budget; above 1.0× means it is higher. It describes two averages in this dataset, not any individual's pay or spending."
   },
   "Articles": {
     "sectionTitle": "Updated 2026 immigration articles",

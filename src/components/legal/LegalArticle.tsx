@@ -65,6 +65,15 @@ export async function LegalArticle({
               </p>
             ))}
 
+            {section.link ? (
+              <Link
+                href={section.link.href}
+                className="mt-4 inline-block font-medium text-brand-700 hover:underline"
+              >
+                {pick(section.link.label, locale)}
+              </Link>
+            ) : null}
+
             {section.bullets ? (
               <ul className="mt-4 space-y-3">
                 {section.bullets.map((bullet, i) => (

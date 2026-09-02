@@ -10,6 +10,15 @@ export type LegalSection = {
   heading: Localized;
   paragraphs?: Localized[];
   bullets?: Localized[];
+  /**
+   * One contextual link out of the section, rendered after the prose.
+   *
+   * The renderer prints paragraphs as plain text, so a sentence that points at
+   * another page had no way to actually reach it — About claimed every source
+   * was listed "on the pages where the numbers appear" while linking nowhere
+   * but /contact. Optional, so every other policy section is unaffected.
+   */
+  link?: { href: string; label: Localized };
 };
 
 export type LegalDocument = {
@@ -325,18 +334,25 @@ export const ABOUT: LegalDocument = {
       heading: { en: "How we compile the numbers", ar: "كيف نجمع الأرقام" },
       paragraphs: [
         {
-          en: "Cost figures are averages for each country's capital or largest city, expressed in US dollars so countries stay directly comparable. They are compiled from public cost-of-living datasets and national statistics offices, and reviewed periodically.",
-          ar: "أرقام التكاليف متوسطات لعاصمة كل دولة أو أكبر مدنها، ومعروضة بالدولار الأمريكي لتبقى المقارنة مباشرة بين الدول. وتُجمع من قواعد بيانات عامة لتكاليف المعيشة ومن مكاتب الإحصاء الوطنية، وتُراجع دوريًا.",
+          // "reviewed periodically" implied a cadence the project does not
+          // operate. These dates are the real ones and must move with
+          // COST_DATA_UPDATED and JOBS_DATA_UPDATED in src/data/sources.ts.
+          en: "Cost figures are averages for each country's capital or largest city, expressed in US dollars so countries stay directly comparable. They are compiled from public cost-of-living datasets and national statistics offices. The cost dataset and the job data were each last reviewed end to end in August 2026.",
+          ar: "أرقام التكاليف متوسطات لعاصمة كل دولة أو أكبر مدنها، ومعروضة بالدولار الأمريكي لتبقى المقارنة مباشرة بين الدول. وتُجمع من قواعد بيانات عامة لتكاليف المعيشة ومن مكاتب الإحصاء الوطنية. وقد رُوجعت بيانات التكاليف وبيانات الوظائف مراجعة كاملة في أغسطس ٢٠٢٦.",
         },
         {
-          en: "Visa information is drawn from official immigration authorities. Salary ranges and demand levels reflect what local job boards and labour-shortage lists show at the time of review.",
-          ar: "تُستقى معلومات التأشيرات من الجهات الرسمية للهجرة. وتعكس نطاقات الرواتب ومستويات الطلب ما تعرضه مواقع التوظيف المحلية وقوائم نقص العمالة وقت المراجعة.",
+          en: "Visa information is drawn from official immigration authorities, and every country guide carries its own review date. Salary ranges and demand levels reflect what local job boards and labour-shortage lists show at the time of review.",
+          ar: "تُستقى معلومات التأشيرات من الجهات الرسمية للهجرة، ويحمل كل دليل دولة تاريخ مراجعته الخاص. وتعكس نطاقات الرواتب ومستويات الطلب ما تعرضه مواقع التوظيف المحلية وقوائم نقص العمالة وقت المراجعة.",
         },
         {
-          en: "We say so on every page that carries a figure: these are estimates for shortlisting, not quotes. Every source we rely on is listed on the pages where the numbers appear.",
-          ar: "ونقول ذلك في كل صفحة تحمل رقمًا: هذه تقديرات للترشيح الأولي لا عروض أسعار. وكل مصدر نعتمد عليه مذكور في الصفحات التي تظهر فيها الأرقام.",
+          en: "We say so on every page that carries a figure: these are estimates for shortlisting, not quotes. Every source we rely on is listed on the page where its numbers appear, and the full list — with how the derived figures are calculated — is on our data page.",
+          ar: "ونقول ذلك في كل صفحة تحمل رقمًا: هذه تقديرات للترشيح الأولي لا عروض أسعار. وكل مصدر نعتمد عليه مذكور في الصفحة التي تظهر فيها أرقامه، والقائمة الكاملة — مع طريقة احتساب الأرقام المشتقّة — في صفحة البيانات.",
         },
       ],
+      link: {
+        href: "/data",
+        label: { en: "Data & sources", ar: "البيانات والمصادر" },
+      },
     },
     {
       id: "independence",
