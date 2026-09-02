@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowRight, BriefcaseBusiness, Database, SlidersHorizontal, Stamp } from "lucide-react";
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  CalendarClock,
+  CheckCircle2,
+  Coins,
+  Database,
+  SlidersHorizontal,
+  Stamp,
+} from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
@@ -8,17 +17,25 @@ import { routing, type Locale } from "@/i18n/routing";
 import { Flag } from "@/components/ui/flag";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { FaqList } from "@/components/common/FaqList";
-import { getCountries, getGuides } from "@/lib/queries";
-import { COST_DATA_UPDATED } from "@/data/sources";
+import { getCountries, getGuides, getJobs } from "@/lib/queries";
+import { COST_DATA_UPDATED, getOfficialSource } from "@/data/sources";
+import { Card, CardBody } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { t as pick, money, formatDate } from "@/lib/format";
 import {
   COST_CATEGORIES,
   COUNTRY_SLUGS,
   codeForSlug,
   compare,
+  coreCost,
+  gapDrivers,
+  housingWeight,
   isPilotPair,
+  monthsOfOriginSalary,
+  outsideCentreScenario,
   PILOT_PAIRS,
   pilotSlugPairs,
+  salaryCoverage,
 } from "@/lib/compare";
 import { pageMetadata, JsonLd, breadcrumbSchema, webPageSchema } from "@/lib/seo";
 import { fitDescription } from "@/lib/seo-content";
@@ -137,11 +154,13 @@ export default async function ComparePage({ params }: { params: Params }) {
   const { locale, from, to, source, destination, data } = resolved;
   setRequestLocale(locale);
 
-  const [t, ex, guides, countries] = await Promise.all([
+  const [t, ex, jt, guides, countries, jobs] = await Promise.all([
     getTranslations("Compare"),
     getTranslations("Explorer"),
+    getTranslations("Jobs"),
     getGuides(),
     getCountries(),
+    getJobs(),
   ]);
 
   const fromName = pick(source.name, locale);
@@ -152,6 +171,81 @@ export default async function ComparePage({ params }: { params: Params }) {
 
   const destinationGuide = guides.find((g) => g.countryCode === destination.code);
   const sourceHasGuide = guides.some((g) => g.countryCode === source.code);
+
+  /**
+   * Everything below is a join over data this site already publishes: the five
+   * core expenses, the destination's own visa routes and requirements, and the
+   * job archetypes recorded for it. Before this the page used the route COUNT
+   * and nothing else from the guide, which is why ten corridors read alike —
+   * they were the same four sentences around a different table.
+   */
+  const drivers = gapDrivers(source, destination);
+  const housing = drivers.find((d) => d.key === "rent") ?? drivers[0];
+  const weight = housingWeight(drivers);
+  const secondary = drivers.filter((d) => d.key !== "rent");
+  const outside = outsideCentreScenario(source, destination);
+  const months = monthsOfOriginSalary(source, destination);
+  const coverage = salaryCoverage(data.toSalaryRatio);
+  const authority = getOfficialSource(destination.code);
+  const destinationJobs = jobs
+    .filter((j) => j.countryCode === destination.code)
+    .slice(0, 4);
+
+  const share = (value: number) => Math.round(value * 100);
+  const times = (value: number) => value.toFixed(1);
+
+  const driversCopy =
+    weight === "dominant"
+      ? t("driversDominant", { share: share(housing.share), fromCity, toCity })
+      : weight === "leading"
+        ? t("driversLeading", {
+            share: share(housing.share),
+            second: ex(secondary[0].key),
+            secondRatio: times(secondary[0].ratio),
+            fromCity,
+          })
+        : t("driversShared", {
+            share: share(housing.share),
+            second: ex(secondary[0].key),
+            secondRatio: times(secondary[0].ratio),
+            third: ex(secondary[1].key),
+            thirdRatio: times(secondary[1].ratio),
+            toCity,
+          });
+
+  const outsideCopy = t(
+    outside.shape === "widens"
+      ? "outsideWidens"
+      : outside.shape === "widensSlightly"
+        ? "outsideWidensSlightly"
+        : outside.shape === "narrows"
+          ? "outsideNarrows"
+          : "outsideUnchanged",
+    {
+      fromCity,
+      toCity,
+      toCost: money(outside.toCore, locale),
+      toCentre: money(coreCost(destination), locale),
+      saving: money(outside.toSaving, locale),
+      centrePercent: Math.abs(data.corePercent),
+      outsidePercent: Math.abs(outside.percent),
+    },
+  );
+
+  const coverageCopy = t(
+    coverage === "below"
+      ? "coverBelow"
+      : coverage === "marginal"
+        ? "coverMarginal"
+        : "coverComfortable",
+    {
+      to: toName,
+      toSalary: money(destination.cost.avgNetSalary, locale),
+      toCost: money(data.toCore, locale),
+      ratio: times(data.toSalaryRatio),
+      fromRatio: times(data.fromSalaryRatio),
+    },
+  );
 
   // Other curated pairs that share an endpoint — related, not arbitrary.
   const related = PILOT_PAIRS.filter(
@@ -369,6 +463,43 @@ export default async function ComparePage({ params }: { params: Params }) {
         </div>
       </section>
 
+      {/* What drives the gap — ranked over the five expenses coreCost sums. */}
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold text-ink">{t("driversTitle")}</h2>
+        <p className="mt-2 leading-relaxed text-ink-muted">{driversCopy}</p>
+
+        <ul className="mt-4 space-y-2">
+          {drivers.slice(0, 3).map((driver) => (
+            <li
+              key={driver.key}
+              className="flex flex-wrap items-baseline gap-x-2 gap-y-1 border-b border-line pb-2 text-sm last:border-0"
+            >
+              <span className="font-medium text-ink">{ex(driver.key)}</span>
+              <span className="tnum text-ink-muted">
+                {money(driver.from, locale)} → {money(driver.to, locale)}
+              </span>
+              <span className="tnum ms-auto text-ink-muted">
+                {t("driverShare", { share: share(driver.share) })}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-3 text-xs leading-relaxed text-ink-muted">
+          {t("driversNote")}
+        </p>
+      </section>
+
+      {/* The outside-centre scenario. Widening is the normal case: seven of the
+          ten pilot corridors widen (by up to 25 points), two are flat, one narrows. */}
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold text-ink">{t("outsideTitle")}</h2>
+        <p className="mt-2 leading-relaxed text-ink-muted">{outsideCopy}</p>
+        <p className="mt-3 text-xs leading-relaxed text-ink-muted">
+          {t("outsideNote")}
+        </p>
+      </section>
+
       <section className="mt-10">
         <h2 className="text-2xl font-bold text-ink">{t("salaryContext")}</h2>
         <p className="mt-2 leading-relaxed text-ink-muted">
@@ -379,6 +510,164 @@ export default async function ComparePage({ params }: { params: Params }) {
             fromSalary: money(source.cost.avgNetSalary, locale),
           })}
         </p>
+
+        <h3 className="mt-6 text-lg font-semibold text-ink">{t("reachTitle")}</h3>
+        <p className="mt-2 leading-relaxed text-ink-muted">
+          {t("reachBody", {
+            from: fromName,
+            toCity,
+            months: times(months),
+            fromSalary: money(source.cost.avgNetSalary, locale),
+          })}
+        </p>
+        <p className="mt-3 leading-relaxed text-ink-muted">{coverageCopy}</p>
+      </section>
+
+      {/* Visa routes — name, who, processing time and government fee, exactly
+          as published on the destination guide. Not summarised, not re-worded. */}
+      {destinationGuide ? (
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold text-ink">
+            {t("routesTitle", { to: toName })}
+          </h2>
+          <p className="mt-2 leading-relaxed text-ink-muted">
+            {authority
+              ? t("routesIntro", { to: toName, authority: authority.name })
+              : t("routesIntroNoAuthority", { to: toName })}
+          </p>
+
+          <div className="mt-5 space-y-4">
+            {destinationGuide.routes.map((route, i) => (
+              <Card key={i}>
+                <CardBody className="pt-5">
+                  <h3 className="text-lg font-semibold text-ink">
+                    {pick(route.name, locale)}
+                  </h3>
+                  <p className="mt-2 leading-relaxed text-ink-muted">
+                    {pick(route.who, locale)}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Badge tone="neutral">
+                      <CalendarClock aria-hidden className="size-3.5" />
+                      {t("routeProcessing")}: {pick(route.processing, locale)}
+                    </Badge>
+                    <Badge tone="outline">
+                      <Coins aria-hidden className="size-3.5" />
+                      {t("routeFee")}: {pick(route.cost, locale)}
+                    </Badge>
+                  </div>
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+
+          <Link
+            href={`/guides/${destination.code}`}
+            className="mt-4 inline-block text-brand-700 underline underline-offset-2"
+          >
+            {t("routesLink", { to: toName })}
+          </Link>
+        </section>
+      ) : null}
+
+      {destinationGuide ? (
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold text-ink">
+            {t("needTitle", { to: toName })}
+          </h2>
+          <p className="mt-2 leading-relaxed text-ink-muted">
+            {t("needIntro", { to: toName })}
+          </p>
+          <ul className="mt-4 space-y-3">
+            {destinationGuide.requirements.slice(0, 4).map((req, i) => (
+              <li key={i} className="flex gap-3">
+                <CheckCircle2
+                  aria-hidden
+                  className="mt-0.5 size-5 shrink-0 text-brand-600"
+                />
+                <span className="leading-relaxed text-ink">
+                  {pick(req, locale)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {/* Role archetypes, labelled as such. No employers, no JobPosting schema:
+          these records carry no vacancy, no posting date and nothing to apply to. */}
+      {destinationJobs.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold text-ink">
+            {t("jobsTitle", { to: toName })}
+          </h2>
+          <p className="mt-2 leading-relaxed text-ink-muted">
+            {t("jobsIntro", { to: toName })}
+          </p>
+
+          <ul className="mt-5 space-y-3">
+            {destinationJobs.map((job) => (
+              <li
+                key={job.id}
+                className="rounded-card border border-line bg-surface p-4"
+              >
+                <p className="font-medium text-ink">{pick(job.title, locale)}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                  <Badge tone={job.demand === "high" ? "high" : "neutral"}>
+                    {jt("demand")}:{" "}
+                    {job.demand === "high"
+                      ? jt("demandHigh")
+                      : job.demand === "medium"
+                        ? jt("demandMedium")
+                        : jt("demandLow")}
+                  </Badge>
+                  <span className="tnum text-ink-muted">
+                    {money(job.salaryFrom, locale, job.salaryCurrency)} –{" "}
+                    {money(job.salaryTo, locale, job.salaryCurrency)}{" "}
+                    {jt("perYear")}
+                  </span>
+                  <span className="text-ink-muted">
+                    {job.visaSponsorship ? jt("sponsorship") : jt("noSponsorship")}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <Link
+            href={`/jobs?country=${destination.code}`}
+            className="mt-4 inline-block text-brand-700 underline underline-offset-2"
+          >
+            {t("jobsLinkAll", { to: toName })}
+          </Link>
+        </section>
+      ) : null}
+
+      {/* The interpretation, assembled from the branches computed above so it
+          differs wherever the underlying data differs. */}
+      <section className="mt-10 rounded-card border border-line bg-paper p-6">
+        <h2 className="text-2xl font-bold text-ink">{t("showTitle")}</h2>
+        <p className="mt-2 leading-relaxed text-ink">
+          {weight === "shared"
+            ? t("showHousingShared", {
+                share: share(housing.share),
+                fromCity,
+                toCity,
+                second: ex(secondary[0].key),
+                secondRatio: times(secondary[0].ratio),
+              })
+            : t("showHousing", {
+                share: share(housing.share),
+                fromCity,
+                toCity,
+              })}{" "}
+          {t("showReach", { toCity, from: fromName, months: times(months) })}{" "}
+          {t("showOutside", {
+            centrePercent: Math.abs(data.corePercent),
+            outsidePercent: Math.abs(outside.percent),
+          })}{" "}
+          {t("showCoverage", { ratio: times(data.toSalaryRatio) })}
+        </p>
       </section>
 
       {/* Migration intent: cost is one input, not the decision. */}
@@ -386,8 +675,6 @@ export default async function ComparePage({ params }: { params: Params }) {
         <h2 className="text-2xl font-bold text-ink">
           {t("movingTitle", { from: fromName, to: toName })}
         </h2>
-        <p className="mt-2 leading-relaxed text-ink-muted">{t("movingBody")}</p>
-
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {destinationGuide ? (
             <Link
@@ -461,6 +748,17 @@ export default async function ComparePage({ params }: { params: Params }) {
         </section>
       ) : null}
 
+      <section className="mt-10">
+        <h2 className="text-2xl font-bold text-ink">{t("limitsTitle")}</h2>
+        <ul className="mt-4 list-disc space-y-2 ps-5 leading-relaxed text-ink-muted">
+          <li>{t("limitEstimate")}</li>
+          <li>{t("limitCore")}</li>
+          <li>{t("limitCity", { toCity, fromCity })}</li>
+          {destinationGuide ? <li>{t("limitVisa")}</li> : null}
+          {destinationJobs.length > 0 ? <li>{t("limitJobs")}</li> : null}
+        </ul>
+      </section>
+
       <FaqList
         title={t("faqTitle", { from: fromName, to: toName })}
         items={faqs}
@@ -478,6 +776,28 @@ export default async function ComparePage({ params }: { params: Params }) {
             {t("sourcesLink")}
           </Link>
         </p>
+        <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+          {t("sourcesDates", {
+            costDate: formatDate(COST_DATA_UPDATED, locale),
+            to: toName,
+            guideDate: destinationGuide
+              ? formatDate(destinationGuide.updatedAt, locale)
+              : formatDate(COST_DATA_UPDATED, locale),
+          })}
+        </p>
+        {authority ? (
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            {t("sourcesAuthority", { to: toName, authority: "" })}
+            <a
+              href={authority.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-700 underline underline-offset-2"
+            >
+              {authority.name}
+            </a>
+          </p>
+        ) : null}
       </section>
 
       <p className="mt-6 text-xs leading-relaxed text-ink-muted">

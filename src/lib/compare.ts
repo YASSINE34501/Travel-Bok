@@ -129,3 +129,148 @@ export function compare(from: Country, to: Country): Comparison {
     fromSalaryRatio: from.cost.avgNetSalary / fromCore,
   };
 }
+
+/**
+ * Categories used to attribute the gap, with housing counted ONCE.
+ *
+ * COST_CATEGORIES lists `rent` and `rentOutside` because the breakdown table
+ * shows both, but they are two measurements of the same expense — nobody pays
+ * both. Attributing the gap over that list made housing appear twice and put
+ * `rentOutside` second in all ten corridors, which is an artefact rather than a
+ * finding. Excluding it (and `meal`, which is not part of `coreCost`) leaves
+ * exactly the five expenses `coreCost` actually sums.
+ */
+const GAP_CATEGORIES = [
+  { key: "rent", get: (c: Country) => c.cost.rentCenter },
+  { key: "groceries", get: (c: Country) => c.cost.groceries },
+  { key: "utilities", get: (c: Country) => c.cost.utilities },
+  { key: "transport", get: (c: Country) => c.cost.transport },
+  { key: "internet", get: (c: Country) => c.cost.internet },
+] as const;
+
+export type GapDriver = {
+  key: string;
+  from: number;
+  to: number;
+  /** Destination minus origin, monthly USD. */
+  diff: number;
+  /** Destination as a multiple of origin. 4.7 means "4.7 times as much". */
+  ratio: number;
+  /** Share of the total absolute gap this category accounts for, 0–1. */
+  share: number;
+};
+
+/** The five core expenses, ordered by how much of the gap each explains. */
+export function gapDrivers(from: Country, to: Country): GapDriver[] {
+  const rows = GAP_CATEGORIES.map((cat) => {
+    const a = cat.get(from);
+    const b = cat.get(to);
+    return { key: cat.key as string, from: a, to: b, diff: b - a, ratio: a ? b / a : 0 };
+  });
+  const total = rows.reduce((sum, r) => sum + Math.abs(r.diff), 0);
+  return rows
+    .map((r) => ({ ...r, share: total ? Math.abs(r.diff) / total : 0 }))
+    .sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+}
+
+/**
+ * How concentrated the gap is in housing. Measured, not assumed: across the ten
+ * pilot corridors housing carries between 68% and 84% of the gap, so these
+ * thresholds all have real members and the wording genuinely changes.
+ */
+export type HousingWeight = "dominant" | "leading" | "shared";
+
+export function housingWeight(drivers: GapDriver[]): HousingWeight {
+  const housing = drivers.find((d) => d.key === "rent");
+  const share = housing?.share ?? 0;
+  if (share >= 0.8) return "dominant";
+  if (share >= 0.72) return "leading";
+  return "shared";
+}
+
+/**
+ * `coreCost` with rent taken outside the city centre instead of in it.
+ *
+ * Mirrors `coreCost` exactly — same five expenses, same order — substituting
+ * the one figure that changes. Written as its own function rather than a
+ * parameter on `coreCost` so there is never a version of "core cost" whose
+ * meaning depends on an argument.
+ */
+export function outsideCentreCore(c: Country) {
+  return (
+    c.cost.rentOutside +
+    c.cost.groceries +
+    c.cost.utilities +
+    c.cost.transport +
+    c.cost.internet
+  );
+}
+
+/** How the comparison changes if both sides live outside the centre. */
+export type OutsideShape = "widens" | "widensSlightly" | "unchanged" | "narrows";
+
+export type OutsideScenario = {
+  fromCore: number;
+  toCore: number;
+  percent: number;
+  /** Percentage points the gap moves versus the centre figure. Negative narrows. */
+  deltaPoints: number;
+  /** Monthly saving in the destination from living outside the centre. */
+  toSaving: number;
+  shape: OutsideShape;
+};
+
+export function outsideCentreScenario(from: Country, to: Country): OutsideScenario {
+  const fromCore = outsideCentreCore(from);
+  const toCore = outsideCentreCore(to);
+  const percent = Math.round(((toCore - fromCore) / fromCore) * 100);
+  const centre = Math.round(((coreCost(to) - coreCost(from)) / coreCost(from)) * 100);
+  const deltaPoints = percent - centre;
+
+  /**
+   * Measured spread across the ten pilot corridors: +25 points (Egypt→Germany)
+   * down to -8 (Morocco→the UAE).
+   *
+   * Widening is the normal case, not the exception: rent outside the centre is
+   * cheaper on both sides, but it falls by a larger *proportion* in the lower-
+   * cost origin city, so the percentage gap grows even as the destination bill
+   * drops. Seven of the ten corridors widen, two are flat, one narrows — which
+   * is why the thresholds sit where they do and why no branch is empty.
+   */
+  const shape: OutsideShape =
+    deltaPoints >= 15
+      ? "widens"
+      : deltaPoints >= 5
+        ? "widensSlightly"
+        : deltaPoints <= -5
+          ? "narrows"
+          : "unchanged";
+
+  return {
+    fromCore,
+    toCore,
+    percent,
+    deltaPoints,
+    toSaving: coreCost(to) - toCore,
+    shape,
+  };
+}
+
+/**
+ * One month of the destination's core cost, expressed in months of the
+ * ORIGIN's average net salary. Answers "how far does my current pay go there".
+ * Deliberately not called disposable income: `coreCost` is rent, groceries,
+ * utilities, transport and internet, not a full household budget.
+ */
+export function monthsOfOriginSalary(from: Country, to: Country) {
+  return coreCost(to) / from.cost.avgNetSalary;
+}
+
+/** Whether the destination's own average net salary covers its core cost. */
+export type SalaryCoverage = "below" | "marginal" | "comfortable";
+
+export function salaryCoverage(ratio: number): SalaryCoverage {
+  if (ratio < 1) return "below";
+  if (ratio < 1.2) return "marginal";
+  return "comfortable";
+}
